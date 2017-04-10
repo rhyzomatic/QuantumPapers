@@ -1,0 +1,52 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage[font=footnotesize, labelfont={sf,bf}, margin=1cm]{caption}
+\usepackage{mathtools}
+\usepackage{wrapfig}
+\usepackage[letterpaper, portrait, margin=1in]{geometry}
+\usepackage{framed}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage{enumerate}
+\usepackage[titletoc,toc,title]{appendix}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usepackage[section]{placeins}
+\newcommand{\?}{\stackrel{?}{=}}
+%Gummi|065|=)
+\title{\textbf{Embedding 3D lattice Ising Problems on the D-Wave Processor}}
+\author{William Bernoudy}
+\date{\today}
+\begin{document}
+
+\maketitle
+
+\section{Introduction to the Ising Model}
+
+$$F(s) \propto e^{-\frac{E(s)}{kT}}$$
+
+$$P(s, s', T) = e^{-\frac{E(s')-E(s)}{T}}$$
+
+\textbf{Input: $T_i, T_f, num\_sweeps, h, J$.}
+\begin{enumerate}
+\item Start with a random state $s$.
+\item Let $T\_step = (T_i - T_f)/num\_sweeps$ and $T = T_i$.
+\item Repeat $num\_sweeps$ times:
+	\begin{enumerate}
+	\item For $i$ in a random permutation of $[1,2,...,n]$:
+		\begin{enumerate}
+		\item Let $s' = s$.
+		\item Set $s'_i = -s'_i$.
+		\item If $e^{-\frac{E(s')-E(s)}{T}} > random(0,1)$, let $s = s'$.
+		\end{enumerate}
+		\item Set $T = T - T\_step$.
+	\end{enumerate}
+\end{enumerate}
+
+
+
+\end{document}
