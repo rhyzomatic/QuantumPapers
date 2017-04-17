@@ -95,21 +95,19 @@ Schrödinger's wave equation results in some interesting properties of matter. O
 Classical computation usually consists of two components: memory and a processor. In the memory, binary information is stored in the form of bits. A bit is a single piece of binary data, meaning it is either a zero or a one; the information that we desire to process must thus be encoded in a sequence of zeros and ones. The processor is simply a device that performs different operations on the bits in the memory.
 
 At any given point in time, we can talk about the system state of the processor. This essentially consists of the value of the bits in the memory. For a processor that runs $n$ bits, the memory must be in one of $2^n$ possible states. For example, if we have a processor that uses a 2-bit architecture, the memory has 2 bits. This means that at any point during our processing, we could examine the memory and see that it will be in one of $2^2=4$ possible states:
-
 $$00$$
 $$01$$
 $$10$$
 $$11$$
 
-Another way of representing the states of a classical computer is with vectors. Though unnecessary to understand classical computation, vectors will help tremendously when trying to understand quantum computation. Instead of using a zero or a one to represent the state of one bit, we can use a two dimensional vector :
-
+Another way of representing the states of a classical computer is with vectors. Though unnecessary to understand classical computation, vectors will help tremendously when trying to understand quantum computation. Instead of using a zero or a one to represent the state of one bit, we can use a two dimensional vector:
 $$\left | 0 \right \rangle=\begin{pmatrix}1\\ 0\end{pmatrix} \quad \left | 1 \right \rangle=\begin{pmatrix}0\\ 1\end{pmatrix}$$
              
-These are the two binary states of a single bit. The $\left | 0 \right \rangle$ notation is simply used to indicate that in this case, we are talking about the vector that corresponds to the value of 0 in our system. 
+These are the two binary states of a single bit. We use two dimensional vectors so that the 0 and 1 states are linearly independent, which will allow us to combine the states without mixing when we model quantum computers. The $\left | 0 \right \rangle$ notation is simply used to indicate that in this case, we are talking about the vector that corresponds to the value of 0 in our system. 
 
 For computers with more than one bit, we are actually dealing with vectors in higher dimensional space. If we have a processor with $n$ bits, then the vectors that correspond to the different states of the machine will have $2^n$ dimensions. We can see this holds true for the single bit processor, because it has $2^1=2$ dimensions. For a classical computer, the number of dimensions created by its bits is equal to the total number of possible states of the computer. Each state of the computer corresponds to a vector pointing directly in one of the $2^n$ dimensions with a magnitude of 1.
 
-To calculate a system's state vector from the states of its bits, we can use the \textit{tensor} product of all the states of the individual bits. The tensor product for matrices, also called the Kronecker product and denoted as $\otimes$, is a matrix operation defined for any two matrices that produces a third matrix in a way that generalizes the outer product of two vectors. For an $m$ by $n$ matrix $\mathbf{A}$ and a $p$ by $q$ matrix $\mathbf{B}$, the tensor product of $\mathbf{A}$ and $\mathbf{B}$ is an $mp$ by $nq$ matrix is
+To calculate a system's state vector from the states of its bits, we can use the \textit{tensor product} of all the states of the individual bits. The tensor product for matrices, also called the Kronecker product and denoted as $\otimes$, is a matrix operation defined for any two matrices that produces a third matrix in a way that generalizes the outer product of two vectors. For an $m$ by $n$ matrix $\mathbf{A}$ and a $p$ by $q$ matrix $\mathbf{B}$, the tensor product of $\mathbf{A}$ and $\mathbf{B}$ is an $mp$ by $nq$ matrix is
 
 $$\mathbf{A}\otimes\mathbf{B} = \begin{bmatrix} a_{11} \mathbf{B} & \cdots & a_{1n}\mathbf{B} \\ \vdots & \ddots & \vdots \\ a_{m1} \mathbf{B} & \cdots & a_{mn} \mathbf{B} \end{bmatrix}$$
 
@@ -170,9 +168,9 @@ where $a$, $b$, $\theta$ and $\phi$ are all real numbers. Because we have the sa
 
 $$1 = |ae^{i\theta}|^2 + |be^{i\phi}|^2 = |a(\cos{\theta}+i\sin{\theta})|^2 + |b(\cos{\phi}+i\sin{\phi})|^2$$
 $$1 = a^2(\cos^2{\theta} + \sin^2{\theta}) + b^2(\cos^2{\phi} + \sin^2{\phi})$$
-$$1 = a^2 + b^2$$ 
+$$1 = a^2 + b^2$$
 
-Because $a$ and $b$ also must satisfy this normalization constraint, we can represent them both with just a single value on the interval [0,1]. Thus we can represent a single qubit with just three real values. The Bloch sphere visualizes this representation. When the qubit is pointed directly upward (the positive z-axis), it has a value of $\ket{0}$. When it is pointed directly downwards (the negative z-axis), it has a value of $\ket{1}$. Thus the z-axis corresponds to the normalized $a$ and $b$ value (note that while $\ket{0}$ and $\ket{1}$ are shown on the same axis, they are still linearly independent basis vectors).  Unlike the bit, we can see that there are now two axes of rotation afforded to the qubit that were not present before. However, the current state of the qubit in the Bloch sphere remains on the surface of the sphere. We can see in this example that it is pointed more closely upwards, towards the $\ket{0}$ vector, than it is downwards. This means that if we were to observe this qubit, it is more likely that it would collapse to the $\ket{0}$ state. If the qubit were pointed more towards the bottom of the sphere at the $\ket{1}$ vector, it would be more likely that we would collapse to the $\ket{1}$ state.
+Because $a$ and $b$ also must satisfy this normalization constraint, we can represent them both with just a single value on the interval [0,1]. Thus we can represent a single qubit with just three real values: $\theta$, $\phi$, and $a$, where $b = \sqrt{1 - a^2}$. The Bloch sphere visualizes this representation. When the qubit is pointed directly upward (the positive z-axis), it has a value of $\ket{0}$. When it is pointed directly downwards (the negative z-axis), it has a value of $\ket{1}$. Thus the z-axis corresponds to the normalized $a$ and $b$ value (note that while $\ket{0}$ and $\ket{1}$ are shown on the same axis, they are still linearly independent basis vectors).  Unlike the bit, we can see that there are now two axes of rotation afforded to the qubit that were not present before. However, the current state of the qubit in the Bloch sphere remains on the surface of the sphere. We can see in this example that it is pointed more closely upwards, towards the $\ket{0}$ vector, than it is downwards. This means that if we were to observe this qubit, it is more likely that it would collapse to the $\ket{0}$ state. If the qubit were pointed more towards the bottom of the sphere at the $\ket{1}$ vector, it would be more likely that we would collapse to the $\ket{1}$ state.
 
 \begin{figure}[!h]
     \centering
