@@ -1,7 +1,0 @@
-Dear Dan Ventura,
-
-I recently read your paper on quantum associative memory and thought it was excellent. I decided to try implement your algorithm down to the gate level on a quantum computer simulator. Thanks to the helpful examples, this was very straightforward. For the most part, I was able to successfully get everything in the algorithm working (I think I was also able to improve it slightly, by using only n+3 qubits during the storing stage instead of 2n+2). I have two questions about the paper:
-
-For the Sp operator, which does the "carving off" of the superposition, you had one 1/sqrt(p) entries in the matrix as negative. I noticed that if I left it as negative, the phase ended up being reversed in the final superposition of all the stored patterns, which I don't think was intended. If I left this entry positive, everything came out correctly as in the examples. Am I missing something here?
-
-I have not been able to successfully use the equation you provided to calculate T
