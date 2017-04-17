@@ -15,7 +15,11 @@
 \usepackage{listings}
 \usepackage{color}
 \usepackage{float}
-\usepackage[utf8]{inputenc}
+
+
+\usepackage[mathletters]{ucs}
+\usepackage[utf8x]{inputenc}
+
 \usepackage{enumerate}
 \usepackage[titletoc,toc,title]{appendix}
 \usepackage{amsfonts}
@@ -63,9 +67,9 @@ Moore’s law states that the number of transistors that can be manufactured at 
 
 However, the end of Moore’s law does not mean the end of the progression of computation. Quantum computing offers an alternative to computing on silicon chips. While quantum computers are superior to classical (e.g. transistor-based) computers only for a limited class of problems, these problems have wide-reaching applications in many fields such as machine learning, protein folding, search algorithms, and optimization problems. Many of these problems are able to be completed in exponentially shorter periods of time on quantum computers \cite{apps14}. Though quantum computers will never replace classical computers, their possible applications include exciting and important future developments.
 
-I chose to study quantum computing mainly because I believe it may play a crucial role in the development of certain technologies that will benefit many people in the same way conventional computing has. For example, understanding protein folding allows researchers to develop better drugs to prevent and cure diseases such as HIV/AIDS and cancer, and quantum computing may allow us to achieve more on this front than conventional computers ever will \cite{foldit}. I also appreciate the way that quantum computing attempts to repurpose some of the strangest observed phenomena central to the fundamental nature of the universe to perform certain types of computations faster. 
+I chose to study quantum computing mainly because I believe it will play a crucial role in the development of certain technologies that will benefit many people in the same way conventional computing has. For example, understanding protein folding allows researchers to develop better drugs to prevent and cure diseases such as HIV/AIDS and cancer, and quantum computing may allow us to achieve more on this front than conventional computers ever will \cite{foldit}. I also appreciate the way that quantum computing attempts to repurpose some of the strangest observed phenomena central to the fundamental nature of the universe to perform certain types of computations faster. 
 
-To accomplish this goal, I took classes such as Linear Algebra and Complex Analysis which helped me form an understanding and familiarity of the underlying concepts behind quantum computing. I then used self-study of quantum computing textbooks, research articles and blog posts by experts in the field to learn the basics of quantum computing itself. I also used several final projects in various classes as opportunities to expand my understanding by implementing common algorithms. Finally, I interned at D-Wave Systems, currently the only company in the world producing quantum computers. During the internship, I worked with an algorithms researcher\footnote{Andrew King, aking@dwavesys.com.} to find the best way to run a certain type of problem on their computers.
+To accomplish this goal, I took classes such as Linear Algebra and Complex Analysis which helped me form an understanding and familiarity of the underlying concepts behind quantum computing. I then used self-study of quantum computing textbooks, research articles and blog posts by experts in the field to learn the basics of quantum computing. I also used several final projects in various classes as opportunities to expand my understanding by implementing common quantum algorithms. Finally, I interned at D-Wave Systems, currently the only company in the world producing quantum computers. During the internship, I worked with an algorithms researcher\footnote{Andrew King, aking@dwavesys.com.} to find the best way to run a certain type of problem on their computers.
 
 \section{Outline of Keystone}
 In chapter 2, I outline the developments in physics that led to the modern understanding of the quantum world, explain how conventional computing can be modeled using linear algebra, explain the basics of quantum computing, and then touch on the different types of quantum computation.
@@ -76,20 +80,22 @@ In chapter 4, I discuss Grover's algorithm and its applications, describe how it
 
 In chapter 5, I describe an associative memory algorithm and show my implementation of it on the same simulator.
 
-In chapter 6, I explain quantum annealing and its application to solving Ising problems, compare it to simulated annealing, and discuss the difficulties with programming and using D-Wave's actual quantum annealing machine.
+In chapter 6, I show how to recursively construct a quantum circuit which implements the quantum Fourier transform.
 
-Finally, in chapter 7, I conclude my Keystone, discuss some of the problems quantum computing faces and what I aim to do in the future.
+In chapter 7, I explain quantum annealing and its application to solving Ising problems, compare it to simulated annealing, and discuss the difficulties with programming and using D-Wave's actual quantum annealing machine.
+
+Finally, in chapter 8, I conclude my Keystone, discuss some of the problems quantum computing faces and what I aim to do in the future.
 
 \chapter{Introduction to Quantum Computing}
 
 \section{Quantum Mechanics}
-At the dawn of the twentieth century, Max Planck made the amazing discovery that the energy level of an electromagnetic wave, i.e. light, is quantized \cite{meh01}. Instead of being continuous, as previously thought, Planck discovered that there is a lower limit on level of energy that an electromagnetic wave can have, and that the energy must always be a multiple of this lower bound, called Planck's constant. In other words, the energy of an electromagnetic wave is divided up into discrete ``quanta" (as he called them), or packets of energy. The word ``quantum" is derived from this discovery.
+At the dawn of the twentieth century, Max Planck made the amazing discovery that the energy level of an electromagnetic wave, i.e. light, is quantized \cite{meh01}. Instead of being continuous, as previously thought, Planck discovered that there is a lower limit on level of energy that an electromagnetic wave can have, and that the energy must always be a multiple of this lower bound, called Planck's constant. In other words, the energy of an electromagnetic wave is divided up into discrete ``quanta," or packets of energy. The word ``quantum" is derived from this discovery.
 
-Einstein expanded on Planck’s findings and found that light can be modelled not only as a wave (as was the case in physics previously) but also as a particle \cite{ein05}. The corresponding particle for light is called a photon. This led to the discovery of the wave-particle duality of nature, one of the fundamental principles of quantum mechanics. The wave-particle duality states that every particle or packet of energy has the properties of both waves and particles. Quantum mechanics was developed as a result of this discovery. Scientists found that quantum mechanics did an extraordinary job of explaining certain phenomena on tiny scales that classical physics could not explain (e.g. the ``orbit" of an electron around the nucleus of an atom; according to classical physics, the orbit would decay and the ``orbit" could not be stable) \cite{smi15}.
+Einstein expanded on Planck’s findings and found that light can be modelled not only as a wave, as was the case in physics previously, but also as a particle \cite{ein05}. The corresponding particle for light is called a photon. This led to the discovery of the wave-particle duality of nature, one of the fundamental principles of quantum mechanics. The wave-particle duality states that every particle or packet of energy has the properties of both waves and particles. Quantum mechanics was developed as a result of this discovery. Scientists found that quantum mechanics did an extraordinary job of explaining certain phenomena on tiny scales that classical physics could not explain. For example, take the ``orbit" of an electron around the nucleus of an atom. According to classical physics, the orbit would decay and the ``orbit" could not be stable \cite{smi15}.
 
-In 1926, Erwin Schrödinger published a paper outlining a new equation (called ``Schrödinger’s wave equation") that modelled quantum physics \cite{schr26}. In the quantum understanding, all properties of a physical system are modeled by a wave function which describes the different probabilities of the system being in any of its possible configurations. This means that before the system is measured by an observer, the system exists simultaneously in some amount of all of its possible states. When they are measured (when the wave function collapses), a system state is chosen seemingly at random according to the probability distribution. Schrödinger's wave equation models the evolution of the wave function of a physical system over time. It does not predict what the actual values will be, but instead gives a spread of the probabilities for the different values one might get when the system is measured.
+In 1926, Erwin Schrödinger published a paper outlining a new equation, called ``Schrödinger’s wave equation," that modelled quantum physics \cite{schr26}. In the quantum understanding, all properties of a physical system are modeled by a wave function which describes the different probabilities of the system being in any of its possible configurations. This means that before the system is measured by an observer, the system exists simultaneously in some amount of all of its possible states. When they are measured, i.e. when the wave function collapses, a system state is chosen seemingly at random according to the probability distribution. Schrödinger's wave equation models the evolution of the wave function of a physical system over time. It does not predict what the actual values will be, but instead gives a spread of the probabilities for the different values one might get when the system is measured.
 
-Schrödinger's wave equation results in some interesting properties of matter. One of these, which allows for a basis for quantum computation, is called quantum superposition. Because of a certain attribute of the solutions to the wave equation (their linearity), matter can exist in an overlap of many different states. For example, let's say we have some electrons traveling in a loop of conductive material (a circuit). In the classical understanding, the electrons must be traveling in one of the two possible directions. In the quantum mechanical understanding, as long as we do not disturb the circuit in any way (which is equivalent to observation or the wave collapsing), the electrons can actually flow both ways at once. We could then use Schrödinger's wave equation to determine the likelihood of the electrons flowing in one direction or another once we measure the system.
+Schrödinger's wave equation results in some interesting properties of matter. One of these, which allows for a basis for quantum computation, is called quantum superposition. Because of a certain attribute of the solutions to the wave equation (their linearity), matter can exist in an overlap of many different states. For example, let's say we have some electrons traveling in a circuit of conductive material. In the classical understanding, the electrons must be traveling in one of the two possible directions. In the quantum mechanical understanding, as long as we do not disturb the circuit in any way (which is equivalent to observation or the wave collapsing), the electrons can actually flow both ways at once. We could then use Schrödinger's wave equation to determine the likelihood of the electrons flowing in one direction or another once we measure the system.
 
 \section{Classical Computation}
 Classical computation usually consists of two components: memory and a processor. In the memory, binary information is stored in the form of bits. A bit is a single piece of binary data, meaning it is either a zero or a one; the information that we desire to process must thus be encoded in a sequence of zeros and ones. The processor is simply a device that performs different operations on the bits in the memory.
@@ -108,7 +114,6 @@ These are the two binary states of a single bit. We use two dimensional vectors 
 For computers with more than one bit, we are actually dealing with vectors in higher dimensional space. If we have a processor with $n$ bits, then the vectors that correspond to the different states of the machine will have $2^n$ dimensions. We can see this holds true for the single bit processor, because it has $2^1=2$ dimensions. For a classical computer, the number of dimensions created by its bits is equal to the total number of possible states of the computer. Each state of the computer corresponds to a vector pointing directly in one of the $2^n$ dimensions with a magnitude of 1.
 
 To calculate a system's state vector from the states of its bits, we can use the \textit{tensor product} of all the states of the individual bits. The tensor product for matrices, also called the Kronecker product and denoted as $\otimes$, is a matrix operation defined for any two matrices that produces a third matrix in a way that generalizes the outer product of two vectors. For an $m$ by $n$ matrix $\mathbf{A}$ and a $p$ by $q$ matrix $\mathbf{B}$, the tensor product of $\mathbf{A}$ and $\mathbf{B}$ is an $mp$ by $nq$ matrix is
-
 $$\mathbf{A}\otimes\mathbf{B} = \begin{bmatrix} a_{11} \mathbf{B} & \cdots & a_{1n}\mathbf{B} \\ \vdots & \ddots & \vdots \\ a_{m1} \mathbf{B} & \cdots & a_{mn} \mathbf{B} \end{bmatrix}$$
 
 where $a_{ij}\mathbf{B}$ is expanded wherever it has been placed in the resulting matrix. The following example illustrates the tensor product of two $2\times2$ matrices:
@@ -161,14 +166,12 @@ $$ \left | \alpha_{0} \right |^{2} + \left | \alpha_{1} \right |^{2}=1$$
 This means that the  values have an infinite number of possibilities. Unlike a classical bit, for which the vector could only consist of all zeroes and one ``1," there are an infinite number of directions $\psi$ can be pointing. This is a mathematical way of saying that $\psi$ is not really in either the $\left | 0 \right \rangle$ state or the $\left | 1 \right \rangle$ state, but in a superposition of both. It exists as some amount of both at the same time.
 
 The $\alpha$ values, also called the amplitudes of their corresponding states, are often written as
-
 $$\ket{\psi} = ae^{i\theta}\ket{0} + be^{i\phi}\ket{1}$$
 
 where $a$, $b$, $\theta$ and $\phi$ are all real numbers. Because we have the same constraint as before, we also have that
-
 $$1 = |ae^{i\theta}|^2 + |be^{i\phi}|^2 = |a(\cos{\theta}+i\sin{\theta})|^2 + |b(\cos{\phi}+i\sin{\phi})|^2$$
 $$1 = a^2(\cos^2{\theta} + \sin^2{\theta}) + b^2(\cos^2{\phi} + \sin^2{\phi})$$
-$$1 = a^2 + b^2$$
+$$1 = a^2 + b^2$$ 
 
 Because $a$ and $b$ also must satisfy this normalization constraint, we can represent them both with just a single value on the interval [0,1]. Thus we can represent a single qubit with just three real values: $\theta$, $\phi$, and $a$, where $b = \sqrt{1 - a^2}$. The Bloch sphere visualizes this representation. When the qubit is pointed directly upward (the positive z-axis), it has a value of $\ket{0}$. When it is pointed directly downwards (the negative z-axis), it has a value of $\ket{1}$. Thus the z-axis corresponds to the normalized $a$ and $b$ value (note that while $\ket{0}$ and $\ket{1}$ are shown on the same axis, they are still linearly independent basis vectors).  Unlike the bit, we can see that there are now two axes of rotation afforded to the qubit that were not present before. However, the current state of the qubit in the Bloch sphere remains on the surface of the sphere. We can see in this example that it is pointed more closely upwards, towards the $\ket{0}$ vector, than it is downwards. This means that if we were to observe this qubit, it is more likely that it would collapse to the $\ket{0}$ state. If the qubit were pointed more towards the bottom of the sphere at the $\ket{1}$ vector, it would be more likely that we would collapse to the $\ket{1}$ state.
 
@@ -191,9 +194,9 @@ $$\left | \mathbf{\Psi} \right \rangle=\begin{pmatrix}\alpha_{000}\\\alpha _{100
 	Thus, at any point in the computation, the state of the qubits, $\mathbf{\Psi}$, can be described with a vector of length $2^{n}$. When we measure the system, it disturbs the ``quantum-ness" of the qubits, causing the wave function to collapse and to pick one value. The probability of the system collapsing into a certain state is given by the square of the magnitude of the $\alpha$ value corresponding to that state.
 
 \section{The Gate Model of Quantum Computing}
-To qualify as a quantum computer, a device or model must simply be able to do computation that takes advantage of quantum effects. This means that there are many approaches in the field to understanding quantum computing as well as distinct approaches to physical realizations. In this paper, I will discuss the two most common models: the gate model and quantum annealing. They have many similarities, and perhaps most importantly, the concept of representing the system state with a complex vector of length $2^n$ is common to both. 
+To qualify as a quantum computer, a device or model must simply be able to do computation that takes advantage of quantum effects. This means that there are many approaches in the field to understanding quantum computing as well as distinct approaches to physical realizations. In this Keystone, I will discuss the two most common models: the gate model and quantum annealing. They have many similarities, and perhaps most importantly, the concept of representing the system state with a complex vector of length $2^n$ is common to both. 
 
-The gate model of quantum computing (also called a universal quantum computer or a Quantum Turing machine) describes a model where discrete operations applied to the system that predictably produces a new system state. In this sense, it is similar to way that we think about classical computing (the system state exists in memory and then is passed into the processor, which then predictably modifies the system state and the outcome is loaded back into the memory). The famous quantum algorithms, such as Grover's algorithm and Shor's algorithm, are all described using the gate based model. It is also called a universal quantum computer because it is able to run any quantum algorithm with a polynomial overhead. However, researchers have struggled to make a device that is able to perform gate based algorithms in any meaningful way.
+The gate model of quantum computing (also called a universal quantum computer or a Quantum Turing machine) describes a model where discrete operations applied to the system predictably produce a new system state. In this sense, it is similar to way that we think about classical computing, where the system state exists in memory and then is passed into the processor, which then predictably modifies the system state and the outcome is loaded back into the memory. The famous quantum algorithms, such as Grover's algorithm and Shor's algorithm, are all described using the gate based model. It is also called a universal quantum computer because it is able to run any quantum algorithm with a polynomial overhead. However, researchers have struggled to make a device that is able to perform gate based algorithms in any meaningful way.
 
 In the next chapter, I will explain how the gate-based model provides easy ways of simulating a universal quantum computer.
 
@@ -205,7 +208,7 @@ To create a system of $n$ qubits, we simply make a vector length $2^{n}$ of all 
 
 Just like classical computation, quantum computation is done by causing the qubits to react in certain ways through ``quantum gates." In the same vein as the state of the computer, gates can conveniently represented as matrices. We can multiply the state of the system by a matrix corresponding to a gate to ``simulate" the gate, as the resulting vector will be representative of the system after it has gone through the gate \cite{spector04}.
 
-For classical compuatation, where the state of the system must be vector consisting of all zeros and one ``1" (because it can only be in one state at once), the only valid matrices (meaning those that correspond to physically possible gates) are ones that always produce a valid system after the multiplication. If a matrix in classical computation produces anything but a vector of all zeros and one ``1", then we know it's invalid. However, quantum gates do not have this restriction. This means that matrices that produce vectors with lots of different values are perfectly fine; this actually just represents a superposition of different system states. In fact, the only restriction on quantum gates is that they are reversible and that their matrix form is a \textit{Hermitian} matrix. This means that if a quantum gate has the corresponding matrix operator $\mathbf{O}$, it is only a valid gate if $\mathbf{O}\mathbf{O}^* = \mathbf{O}^*\mathbf{O} = I$, where $\mathbf{O}^*$ denotes the adjoint of $\mathbf{O}$ (i.e. $(\mathbf{O}^*)_{ij} = \overline{\mathbf{O}_{ji}}$, with $\overline{\mathbf{O}_{ji}}$ being the complex conjugate of $\mathbf{O}_{ji}$).
+For classical compuatation, where the state of the system must be vector consisting of all zeros and one ``1" (because it can only be in one state at once), the only valid matrices, meaning those that correspond to physically possible gates, are ones that always produce a valid system after the multiplication. If a matrix in classical computation produces anything but a vector of all zeros and one ``1", then we know it's invalid. However, quantum gates do not have this restriction. This means that matrices that produce vectors with lots of different values are perfectly fine; this actually just represents a superposition of different system states. In fact, the only restriction on quantum gates is that they are reversible and that their matrix form is a \textit{Hermitian} matrix. This means that if a quantum gate has the corresponding matrix operator $\mathbf{O}$, it is only a valid gate if $\mathbf{O}\mathbf{O}^* = \mathbf{O}^*\mathbf{O} = I$, where $\mathbf{O}^*$ denotes the adjoint of $\mathbf{O}$ (i.e. $(\mathbf{O}^*)_{ij} = \overline{\mathbf{O}_{ji}}$, with $\overline{\mathbf{O}_{ji}}$ being the complex conjugate of $\mathbf{O}_{ji}$).
 
 The superposition principle of quantum mechanics states that any two valid quantum states can be combined linearly to create another valid state. This is a result of the fact that the Schrödinger equation is a linear equation, so any of its solutions (which are wave functions, or in our case, system states of the qubits in our quantum computer) can also be combined linearly. This principle is the reason for why we can model any gate as a matrix, as a gate is simply a linear combination of the previous amplitudes of each possible state of the system. Similarly, matrix multiplication on a vector defines a linear transformation.
 
@@ -278,7 +281,7 @@ $$\frac{1}{\sqrt{2}}\begin{pmatrix}
 1 \\
 \end{pmatrix}$$
 
-The CNOT gate, or the controlled-NOT gate, applies a NOT gate to the second qubit only on the states where the first qubit is $\ket{1}$. For example, it will map $\ket{10} \to \ket{11}$ and $\ket{11} \to \ket{10}$, but $\ket{01} \to \ket{01}$. The SWAP gate swaps the states of the two qubits, mapping $\ket{10} \to \ket{01}$, etc. The Toffoli gate is a double controlled NOT gate, meaning it will only apply a NOT to the third qubit if both the first and second are in the $\ket{1}$ state.
+The CNOT gate, or the controlled-NOT gate, applies a NOT gate to the second qubit only on the states where the first qubit is $\ket{1}$. For example, it will map $\ket{10} \to \ket{11}$ and $\ket{11} \to \ket{10}$, but $\ket{00} \to \ket{00}$ and $\ket{01} \to \ket{01}$. The SWAP gate swaps the states of the two qubits, mapping $\ket{10} \to \ket{01}$, etc. The Toffoli gate is a double controlled NOT gate, meaning it will only apply a NOT to the third qubit if both the first and second are in the $\ket{1}$ state.
 
 However, we cannot use only matrix multiplication to apply a gate that works on fewer qubits than our $n$-qubit system. Thus, we need a way generate a larger matrix that performs the gate on only the qubits we want. This matrix is generated by combining each matrix with the tensor product, similar to how we can combine the single bit vectors to get the system state of a classical computer. Thus if we want to find the operator $\mathbf{O}$ that works on an $n$-qubit quantum computer for which we are applying single qubit operator $O_i$ to qubit $i$, we can do
 
@@ -299,7 +302,7 @@ $$\mathbf{O} = \begin{pmatrix}0 & 1 \\1 & 0 \\\end{pmatrix} \otimes \begin{pmatr
 
 If we want to apply a multiple qubit operator, we can just use that matrix in the chain of tensor products and leave out the next few $I_2$ matrices (as long as it is being applied to consecutive qubits). 
 
-One problem with simulation for this technique is that it is slow (because tensor products are slow) and that there is no way to handle multiple qubit gates being applied to non-consecutive qubits. Luckily, Lee Spector has provided an algorithm for that very purpose in his book \textit{Automatic Quantum Computer Programming: A Genetic Programming Approach} \cite{spector04}:
+One problem with simulation for this technique is that it is slow because computing tensor products is slow, and that there is no way to handle multiple qubit gates being applied to non-consecutive qubits. Luckily, Lee Spector has provided an algorithm for that very purpose \cite{spector04}:
 \begin{figure}[H]
 \begin{framed}
 \textbf{To expand gate matrix G (explicitly) for application to an $n$-qubit system:}
@@ -323,13 +326,53 @@ Following the same logic for the fourth step of the algorithm, to fill in $M_{ij
 
 Now that we have a way to represent the state of the system and a way to apply gates, we have everything necessary for simulating a quantum computer. My implementation of a simulator in Racket can be seen in appendix A.
 
+\section{Usage of Quantum Computer Simulator}
+
+First, use \textit{initialize-register}. This function accepts a list of the classical states we want to set the qubits to.
+
+\begin{lstlisting}
+> (initialize-qubits '(0 1 0)) ; Initialize register with three qubits with the state |010>
+\end{lstlisting}
+
+Now, at any point, we can access the $n$ by 1 (for $n$ qubits) matrix corresponding to the vector representing the state of the qubits stored in the variable \textit{register}.
+
+\begin{lstlisting}
+> register
+(mutable-array #[#[0 0 0 0 0 0 1 0]])
+\end{lstlisting}
+
+We can now apply a gate to the register using \textit{apply-gate}, which takes three arguments: a matrix representing the system-state (probably \textit{register}), a list of the qubits which we want to apply the gates to, and the gate itself (in matrix form). \textit{execute} Then sets register to the result of the computation.
+
+\begin{lstlisting}
+> (apply-gate register '(0 1 2) Toffoli-gate)
+(array #[#[0 0 0 0 0 0 0 1]])
+> register
+(array #[#[0 0 0 0 0 0 0 1]])
+\end{lstlisting}
+
+At this point, quetzal provides the gates: \textit{Hadamard-gate}, \textit{Pauli-X-gate}, \textit{Pauli-Y-gate}, \textit{Pauli-Z-gate}, \textit{CNOT-gate}, \textit{QSwap-gate}, and \textit{Toffoli-gate}. We can define our own by doing
+
+\begin{lstlisting}
+> (define my-gate (matrix [
+> 	[a b]
+> 	[c d]
+> ]))
+\end{lstlisting}
+
+The function \textit{measure-register} displays the most likely state for the system to collapse to on measurement and the likelihood of that happening:
+
+\begin{lstlisting}
+> (measure-register)
+The most likely result is |011> with a probability of 0.9991823155432934
+\end{lstlisting}
+
 In the next chapter, I introduce Grover's algorithm, one of the most important algorithms discovered for a universal quantum computer, and explain how I implemented it using my simulator.
 
 \chapter{Implementing Grover's Algorithm on a Quantum Computer Simulator}
 
 \section{Introduction}
 
-Grover's algorithm is one of the two most important quantum algorithms. Given a search function, which returns true if the input is the data we are searching for and false otherwise, Grover's algorithm is able to find the correct data entry out of $N$ possible entries with a complexity of $O(\sqrt{N})$. This is a significant speedup over the classical algorithm of simply checking each data entry one by one which has a complexity of $O(N)$. Because of how common this problem is, Grover's algorithm has a huge amount of applications, from artificial intelligence to protein sequence comparison. Another good example is the 3-SAT problem: while the best known classical algorithm for solving the 3-SAT problem is of time complexity $O(2^{n})$, Grover's algorithm can be used to reduce this to $O(2^{n/2})$.
+Grover's algorithm is one of the important and promising quantum algorithms. Given a search function, which returns true if the input is the data we are searching for and false otherwise, Grover's algorithm is able to find the correct data entry out of $N$ possible entries with a complexity of $O(\sqrt{N})$. This is a significant speedup over the classical algorithm of simply checking each data entry one by one which has a complexity of $O(N)$. Because of how common this problem is, Grover's algorithm has a huge amount of applications, from artificial intelligence to protein sequence comparison. Another good example is the 3-SAT problem: while the best known classical algorithm for solving the 3-SAT problem is of time complexity $O(2^{n})$, Grover's algorithm can be used to reduce this to $O(2^{n/2})$.
 
 However, on its own, Grover's algorithm needs a quantum search function, or oracle, meaning that the search function must be able to run on the same quantum computer the main algorithm is running on. Thus we also need a way to convert a classical search function to a quantum one.
 
@@ -349,21 +392,17 @@ $$\begin{pmatrix}
 Because the oracle actually would consist of a series of quantum gates, we will not simply be able to see where the -1 is and declare that our solution. However, to avoid needing to come up with an oracle for testing, we can simply use a matrix of the above form.
 
 The Grover diffusion operator, $U_{s}$, consists of three gates: a Hadamard gate applied to all qubits, a phase flip of the $\ket{0^n}$ state, and then a Hadamard gate again applied to all qubits. A Hadamard gate, when given a pure state (i.e. no superposition), simply gives us an even distribution across all qubits. The single qubit form is given by the matrix
-
 $$H_{1}=\frac{1}{\sqrt{2}} \begin{pmatrix}
 1 & 1 \\
 1 & -1 \\
 \end{pmatrix}$$
-
-If we are going to apply the gate to all qubits (as what happens during Grover's algorithm), then the general form is given by
-
+where the indexes $i$ and $j$ start at 0. If we are going to apply the gate to all qubits (as what happens during Grover's algorithm), then the general form is given by
 $$H_{n}=\frac{1}{\sqrt{2}}\begin{pmatrix}
 H_{n-1} & H_{n-1} \\
 H_{n-1} & -H_{n-1} \\
 \end{pmatrix}$$
 
 In my construction of a Hadamard matrix, I used the following formula which results in the same matrix:
-
 $$(H_{n})_{ij}= \frac{(-1)^{i\cdot j}}{2^{n/2}} $$
 
 Now we need a matrix that does the phase flip of the $\left | 0^n \right \rangle$ state. This consists of the identity matrix except with the first 1 flipped to a -1. Thus, for 2 qubits, it would be
@@ -459,11 +498,11 @@ Now we only need OR. We can define OR as the boolean expression $\neg (\neg x_{1
 
 For every AND and every OR in the classical circuit we are given, we will need one extra qubit. The extra qubit is always the third bit for the Toffoli gate. By using the quantum equivalents of the classical logic gates, and introducing extra qubits when necessary, we now have every part necessary to simulate the classical circuit on the quantum circuit such that the result of the classical circuit is produced by the quantum one. However, this is not yet our oracle.
 
-At this point, we have a ciruit takes the input $\left | x \right \rangle \left | 0^{k} \right \rangle$ and gives $\left | junk(x) \right \rangle \left | f(x) \right \rangle$ where $f(x)$ is our classical search function. However, we need it to be of the form \cite{kothari12} 
+At this point, we have a ciruit takes the input $\left | x \right \rangle \left | 0^{k} \right \rangle$ and gives $\left | junk(x) \right \rangle \left | f(x) \right \rangle$ where $f(x)$ is our classical search function. Note that where the previous state $x$ was, our circuit may modify the states of the qubits producing some new state that we call $junk(x)$. However, we need it to be of the form \cite{kothari12} 
 
 $$\left | x \right \rangle \left | q \right \rangle \to \left | x \right \rangle \left | f(x) \oplus q \right \rangle$$
 
-What this means is that we need to preserve the state of $\left | x \right \rangle$ through the circuit. To accomplish this, we can use a technique called ``uncomputation" for the quantum ciruit. Because every quantum gate is reversible, to get $\left | x \right \rangle$ back, we just have to perform all the gates we applied in backward order. However, before we do that, we copy the result of the search function onto a new qubit using a CNOT gate. Then we can perform the uncomputation on the rest of the qubits, resulting in the desired form for the output.
+What this means is that we need to preserve the state of $\left | x \right \rangle$ through the circuit, reversing the result of $junk(x)$. To accomplish this, we can use a technique called ``uncomputation" for the quantum ciruit. Because every quantum gate is reversible, to get $\left | x \right \rangle$ back, we just have to perform all the gates we applied in backward order. However, before we do that, we ``copy" the result of the search function onto a new qubit using a CNOT gate. Then we can perform the uncomputation on the rest of the qubits, resulting in the desired form for the output.
 
 At this point, the general steps for our algorithm are:
 
@@ -492,6 +531,83 @@ However, we still have one final problem: the output qubit needs to be returned 
 
 My implementation in Scheme of this algorithm for generating the oracle can be seen in appendix C.
 
+\section{Usage of Code}
+
+The \textit{generate-fake-Oracle} function takes two arguments: the number of entries in the ``database" we are searching (must be a factor of 2), and the item we are searching for. It then outputs a the corresponding matrix which can be used as the oracle in Grover's algorithm.
+
+\begin{lstlisting}
+> (matrix-print (generate-fake-Oracle 4 2))
+1 0 0 0 
+0 1 0 0 
+0 0 -1 0 
+0 0 0 1 
+\end{lstlisting}
+
+The function \textit{Grover} simulates the algorithm. It takes one argument, the matrix representing the oracle function.
+
+\begin{lstlisting}
+> (Grover (generate-fake-Oracle 64 45))
+The number of required qubits is 6
+Number of operations required is 7
+> (measure-register)
+The most likely result is |101101> with a probability of 0.996585680786799
+\end{lstlisting}
+
+The function \textit{generate\-U\_omega} generates the oracle from a classical circuit. It a boolean expression as its only argument. After it is executed, the matrix representing the oracle operator will be set as \textit{U\_omega}, and \textit{input-qubits} will contain the number of input qubits (used later on). For example, for the boolean expression ($x_0 \land x_1$):
+
+\begin{lstlisting}
+> (generate-U_omega '(AND 0 1))
+> (matrix-print U_omega)
+1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 
+0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+> input-qubits
+1
+\end{lstlisting}
+
+Besides the \textit{AND} operator, there is also the \textit{OR} and the \textit{NOT} operators. Both \textit{AND} and \textit{OR} take exactly two arguments, while \textit{NOT} takes one.
+
+Because there are extra qubits required for the simulated circuit (notice that in the above example, 5 qubits are needed despite there only being two inputs), there is a special Grover's algorithm function called `Grover-from-classical-circuit` that takes this into account. To use it, input the \textit{U\_omega} and \textit{input-qubits} which are automatically generated after using \textit{generate-U\_omega}.
+
+\begin{lstlisting}
+> (Grover-from-classical-circuit U_omega input-qubits)
+The number of required qubits is 5
+Number of operations required is 2
+> (measure-register)
+The most likely result is |11000> with a probability of 0.9999999999999987
+\end{lstlisting}
+
+Since the solution to the classical circuit we inputted is $\Ket{11}$ we can see that the algorithm was successful. Note that Grover's algorithm expects that there is only one state of the input bits which flips the phase. This means there should only be one solution to the search function, and thus just one solution to the classical circuit inputted. If there is more than one, \textit{generate-U\_omega} will not output a valid oracle matrix.
+
 \section{Conclusion}
 
 By representing a quantum computer as a series of matrix operations, I was able to successfully simulate quantum computation as well as perform Grover's algorithm. Furthermore, I was able to come up with a simple algorithm for generating a quantum circuit of only common quantum gates that simulates a given classical circuit. As this is a necessary step in order to use Grover's algorithm in a real world situation, this demonstrates how quantum computers might be used in the future. In the next chapter, I show how to implement an adaption of Grover's algorithm to the problem of associative memory.
@@ -503,7 +619,7 @@ By representing a quantum computer as a series of matrix operations, I was able 
 
 Associative memory deals with the problem of ``learning" a set of patterns, and then being able to ``recall" a certain pattern when presented with just a part of the pattern. There are many simple classical algorithms that can achieve this task, such as storing the patterns in a database and then searching over the database (and each pattern) to find the one that matches. However, these can be slow and require lots of storage space. Another classical solution to this problem is using a Hopfield network, a type of neural network which can be used to implement associative memory. However, if the patterns are of length $n$, the neural network requires $n$ neurons, and is then limited in how many patterns it can store (usually less than half of $n$).
 
-Quantum computing allows a significant improvement over neural network techniques. Dan Ventura and Tony Martinez, in a paper titled \textit{Quantum Associative Memory}, present two algorithms that achieve associative memory that allow up to $m=2^n$ patterns to be stored on $n$ qubits, with a training complexity of $O(mn)$ and a recall complexity of $O(\sqrt{n})$ \cite{Ven00}.
+Quantum computing allows a significant improvement over neural network techniques. Dan Ventura and Tony Martinez, in a paper titled \textit{Quantum Associative Memory}, present two algorithms that achieve associative memory that allow up to $m=2^n$ patterns to be stored on $n$ qubits in a \textit{training} phase, which can then later be \textit{recalled} in another phase of the overall algorithm. Here, training refers to the stage of the algorithm where the patterns are ``learned" and stored on the quantum computer in some capacity, and recall refers to the part where a portion of a pattern is presented and the quantum computer responds with a matching pattern that was previously stored. The overall algorithm has a training complexity of $O(mn)$ and a recall complexity of $O(\sqrt{n})$ \cite{Ven00}. 
 
 In order to show how this algorithm might actually be implemented on a universal quantum computer, each stage of Ventura's and Martinez's (V\&M) paper was achieved and simulated using only common quantum gates. Unless noted, all parts of the algorithms are taken directly from their paper.
 
@@ -562,8 +678,6 @@ Note that is single pattern learning algorithm is $O(n)$, and as we must apply i
 \label{fig:digraph}
 \end{figure}
 
-\newpage
-
 \subsection{Recall algorithm}
 
 As previously stated, the recall algorithm uses a modified Grover search to find the correct learned pattern. The first difference is that we do not prepare the system in any way by applying Hadamard gates at the beginning, as we already have the superposition we want. The second is that at the beginning, since the Grover diffusion operator will also flip the phases of all the states representing the patterns (instead of just the desired pattern), we need another operator that flips all the phases of the patterns back. We call this operator $I_P$. In terms of its matrix, it can be represented as an identity matrix where the $i$th 1 is changed to a $-1$ if $i$ is the decimal representation of one of the patterns. We can construct it with gates by going through every pattern, applying a NOT gate on the qubits that correspond to zeros in the pattern, applying a controlled Pauli-z gate with controls on every qubit (except the one with the Pauli-z gate, which can be any of them), and then re-applying the same NOT gates. This method can be seen in the function \textit{constr-patterns-phaser} in my code. We will notate the normal Grover diffusion operator with $G$.
@@ -581,7 +695,7 @@ We want the oracle for Grover's algorithm to be a quantum circuit which flips th
 \begin{figure}[!htb]
 \centering
 \includegraphics[width=0.25\textwidth]{resources/pdfs/assoc3-crop.pdf}
-\caption{This example would correspond to the partial sequence (0 1 ? ?). We apply a NOT gate to the first qubit because we know it is a zero, then a Z with controls on the known qubits with a target on one of the unkowns, and then re-apply the NOT.}
+\caption{This example would correspond to the partial sequence (0 1 ? ?). We apply a NOT gate to the first qubit because we know it is a zero, then a Z with controls on the known qubits with a target on one of the unknowns, and then re-apply the NOT.}
 \label{fig:digraph3}
 \end{figure}
 
@@ -606,23 +720,31 @@ $$l=-ab+\frac{2a(N+p-r_0-2r_1)}{N-r_0-r_1}-\frac{p-r_1}{N-r_0-r_1}$$
 $$a=\frac{2(p-2r_1)}{N}$$
 $$b=\frac{4(p+r_0)}{N}$$
 
-and where $p$ is the number of patterns, $r_0$ is the number of marked states (states involving the unknown qubits that the controlled Pauli-z gates in $I_P$ did not act on, or, in the matrix representation, all the states corresponding to the $-1$s in the matrix) that do not correspond to learned patterns, and $r_1$ all the marked states that do correspond to learned states. In my code, I assumed that there was only one learned state that the recall should return, so I assumed $r_1$ is 1 and $r_0$ is equal to $2^u-1$ where $u$ is the number of unknowns in the partial sequence.\footnote{If you play around with a few more examples, you might notice that the code will not always produce the correctly matched string. This is covered in the conclusion.}
+where $p$ is the number of patterns, $r_0$ is the number of marked states (states involving the unknown qubits that the controlled Pauli-z gates in $I_P$ did not act on, or, in the matrix representation, all the states corresponding to the $-1$s in the matrix) that do not correspond to learned patterns, and $r_1$ all the marked states that do correspond to learned states. In my code, I assumed that there was only one learned state that the recall should return, so I assumed $r_1$ is 1 and $r_0$ is equal to $2^u-1$ where $u$ is the number of unknowns in the partial sequence.
 
 Though I have no understanding of $T$, V\&M assert that the second algorithm is still $O(\sqrt{n})$ and the same as Grover's algorithm. This makes sense in that though it was modified slightly, the algorithm remains essentially the same.
 
 \section{Implementation and Usage}
-The implementation of quantum associative memory written for my quantum computer simulator has been included in appendix D.
+The implementation of quantum associative memory written for my quantum computer simulator has been included in appendix D. The learning algorithm is called \textit{learn}, and the recall algorithm is called \textit{Grover-part}. They can be used like so:
+	
+	\begin{lstlisting}
+	> (define P '((0 0 0 0) (0 0 1 1) (0 1 1 0) (1 0 0 1) (1 1 0 0) (1 1 1 1)))
+	> (learn P)
+	> (Grover-part '(0 1 1 ?) P)
+	> (measure-register)
+	The most likely result is |0110> with a probability of 0.8437500000000002
+	\end{lstlisting}
 
 \section{Discussion and Conclusion}
 
-Though in general I was able to successfully implement most parts of the algorithms outlined by V\&M, there was one notable issue that I had: The calculation of $T$ often gave me the wrong value. As a result, the code would often apply the oracle and Grover diffusion operator too many times and thus the final superposition was not likely to return the correct value. For example, when 6 patterns of length 4 are learned, and a partial sequence with two unknowns is used to recall, V\&M's definition of $T$ gives $T=3$. However, repeating the Grover step results in a final superposition with $\approx26\%$ chance of returning the wrong pattern, and only a $\approx9\%$ chance of retrieving the correct pattern. If we set $T=0$, however, the final system state has a $\approx84\%$ chance of returning the correct pattern. While this may be due to a mistake in my code or in my implementation of it, I have always been able to achieve a high rate of getting back the correct pattern using different values of $T$, which suggests there is an issue with my (or V\&M's) calculation of $T$.
+Though in general I was able to successfully implement most parts of the algorithms outlined by V\&M, there was one notable issue that I had: The calculation of $T$ often gave me the wrong value. As a result, the code would often apply the oracle and Grover diffusion operator too many times and thus the final superposition was not likely to return the correct value. For example, when 6 patterns of length 4 are learned, and a partial sequence with two unknowns is used to recall, V\&M's definition of $T$ gives $T=3$. However, repeating the Grover step results in a final superposition with a $\approx 26\%$ chance of returning one of the incorrect patterns, and only a $\approx 9\%$ chance of retrieving the correct pattern. If we set $T=0$, however, the final system state has a $\approx84\%$ chance of returning the correct pattern. While this may be due to a mistake in my implementation of it, I have always been able to achieve a high rate of getting back the correct pattern using different values of $T$, which suggests there is an issue with my (or V\&M's) calculation of $T$.
 
 In the next chapter, I discuss the quantum Fourier transform and how to achieve it with simple quantum gates.
 
 \chapter{The Quantum Fourier Transform}
 
 \section{Overview}
-The discrete Fourier transform (DFT) is a function which takes a ``signal" in time space and breaks it down into its constituent frequencies, such that if you were to add up all of those produced frequencies, you would return to the original function. For example, we could record some music by recording regular samples of the sound signal, and then use the DFT to examine which sound frequencies were present and their amplitudes. The DFT has wide ranging applications from music to radio astronomy.
+The discrete Fourier transform (DFT) is a function which takes a ``signal" in time space and breaks it down into its constituent frequencies, such that if we were to add up all of those produced frequencies, we would return to the original signal. For example, we could record some music by recording regular samples of the sound signal, and then use the DFT to examine which sound frequencies were present and their amplitudes. The DFT has wide ranging applications from music to radio astronomy.
 
 \section{QFT with a Matrix}
 
@@ -630,9 +752,9 @@ The quantum Fourier transform is the unitary discrete Fourier transform on the s
 $$x_k \to \frac{1}{\sqrt{N}}\sum_{m = 0}^{N - 1}e^{2\pi i k \frac{m}{N}} x_m$$
 where $x$ is a vector of the samples. Note that this is slightly different than the classical DFT as defined in the previous section because it is unitary, and so it preserves the inner product of two valid vectors as input. In this case, it just means normalizing the output with a factor of $\frac{1}{\sqrt{2}}$. 
 
-The quantum version is almost exactly the same, except that we transform quantum states to other quantum states according to
+The quantum version is almost exactly the same, except that we transform quantum states to other quantum states according to the function
 $$\Ket{x_k} \to \frac{1}{\sqrt{N}}\sum_{m = 0}^{N - 1}e^{2\pi i k \frac{m}{N}} \Ket{x_m}$$
-where $\Ket{x_k}$ is the current complex magnitude of state $\Ket{k}$. If we let $\omega_{n} = e^{2\pi i /N}$ (leaving it as just $\omega$ where the $n$ value is obvious), we can simplify this to
+where $\Ket{x_k}$ is the current complex magnitude of state $\Ket{k}$. Now let $\omega = e^{2\pi i /N}$ (leaving it as just $\omega$ when the $N$ value is obvious), we can simplify this to
 $$\Ket{x_k} \to \frac{1}{\sqrt{N}}\sum_{m = 0}^{N - 1}\omega^{km} \Ket{x_m}$$
 
 $$\begin{pmatrix}
@@ -646,7 +768,7 @@ $$\begin{pmatrix}
   \end{pmatrix}
 \to \frac{1}{\sqrt{N}}
   \begin{pmatrix}
-	\sum_{m=0}^{N-1} \omega^{0\cdot n} x_m\\
+	\sum_{m=0}^{N-1} \omega^{0\cdot m} x_m\\
 	\sum_{m=0}^{N-1} \omega^{m} x_m \\
 	\sum_{m=0}^{N-1} \omega^{2m} x_m \\
 	\vdots \\
@@ -740,18 +862,18 @@ $$\frac{1}{\sqrt{N}}
   \qcol{1}{\omega^{j}}
 $$
 
-We now assume that we already have a circuit which performs this transform on $n-1$ qubits, except that the output is completely reversed. In other words, the output becomes 
+We now assume that we already have a circuit which performs this transform on $n-1$ qubits, except that the output is completely reversed. Let $\hat{\omega} = \omega_{n-1}$. Now the output of just this circuit becomes 
 
 $$\frac{1}{\sqrt{2^{n-1}}} 
-  \qcol{1}{\omega_{n-1}^{j_*}}
+  \qcol{1}{\hat{\omega}^{j_*}}
   \otimes
-  \qcol{1}{\omega_{n-1}^{2j_*}}
+  \qcol{1}{\hat{\omega}^{2j_*}}
   \otimes \cdots \otimes
-  \qcol{1}{\omega_{n-1}^{2^{n-3}j_*}}
+  \qcol{1}{\hat{\omega}^{2^{n-3}j_*}}
   \otimes
-  \qcol{1}{\omega_{n-1}^{2^{n-2}j_*}}$$
+  \qcol{1}{\hat{\omega}^{2^{n-2}j_*}}$$
   
-instead, where $j_*$ is the $j$ but with the bits in reverse order as well. Because $\omega_{n-1}^{k} = e^{2\pi i k / 2^{n-1}} = e^{2\pi i 2k / 2^n} = \omega^{2k}$, we can rewrite this as
+instead, where $j_*$ is the $j$ state but with the bits in reverse order as well. Because $\hat{\omega}^{k} = e^{2\pi i k / 2^{n-1}} = e^{(2k) 2\pi i / 2^n} = \omega^{2k}$, we can rewrite this as
 $$\frac{1}{\sqrt{2^{n-1}}} 
   \qcol{1}{\omega^{2j_*}}
   \otimes
@@ -924,13 +1046,12 @@ $$=\frac{1}{2} \begin{pmatrix}
 1 & -i & -1 & i
 \end{pmatrix} = F_4.$$
 
-Thus we can confirm our circuit works in this case.
+Thus we can confirm our circuit works in this case. Here is an example of the full circuit for 4 qubits:
 
-Here is an example of the full circuit for 4 qubits:
-\begin{figure}[h]
-\centering
+\begin{center}
 \includegraphics[width=0.7\textwidth]{resources/images/qft4.png}
-\end{figure}
+\end{center}
+
 Note that here the X gates are swap gates and R2, R4 and R8 gates correspond to $CR_{\pi/2}$, $CR_{\pi/4}$ and $CR_{\pi/8}$ respectively.
 
 \section{Conclusion}
@@ -938,11 +1059,11 @@ The QFT is surprisingly efficient. In the $k$th recursive stage of the QFT, we u
 
 One important difference between the QFT and the classical DFT is that the QFT runs on quantum states and produces the result of the transform as quantum state, meaning that we would not be able to examine exactly what the result of the transform was. This we run into the fundamental problem that we can only ``measure" a quantum state, meaning that it collapses to a single classical value and the rest of the quantum information is lost. However, the QFT still plays a very important role as a subroutine of other quantum algorithms. One notable one is that the QFT is a part of Shor's algorithm which is the best known factoring algorithm.
 
-In the next chapter, I explain a different model of quantum computing called quantum annealing, and explain how it can be used to solve a certain type of a physics problem.
+In the next chapter, I explain a different model of quantum computing called quantum annealing, and explain how it can be used to solve a certain type of physics problem.
 
 \chapter{Embedding 3D Lattice Ising Problems on the D-Wave Processor}
 \section{Introduction to the Ising Model}
-The Ising Model is a mathematical model inspired by ferromagnets in physics. Ising problems consist of a selection of $n$ discrete spin variables ($s$, a vector of length $n$), weights placed on each variable ($h$, a vector of length $n$), and weights on each pair of variables ($J$, an $n*n$ matrix). Note that the diagonal entries of $J$ have no effect, and that $J_{ij}=J_{ji}$. For every spin variable $s_k \in s$, $s_k \in \{-1,1\}$. The energy for a problem $h$ and $J$ and a given spin state $s$ is given by
+The Ising Model is a mathematical model inspired by ferromagnets in physics. Ising problems consist of a selection of $n$ discrete spin variables ($s = [s_0, s_1, ..., s_{n-1}]$, a vector of length $n$), weights placed on each variable ($h = [h_0, h_1, ..., h_{n-1}]$, a vector of length $n$), and weights on each pair of variables ($J$, an $n*n$ matrix). Note that the diagonal entries of $J$ have no effect, and that $J_{ij}=J_{ji}$. For every spin variable $s_k \in s$, $s_k \in \{-1,1\}$. The energy for a problem $h$ and $J$ and a given spin state $s$ is given by
 
 $$E(s) = \sum h_is_i + \sum_{i,j>i}J_{ij}s_is_j.$$
 
@@ -951,7 +1072,7 @@ Our aim is to find good ways of finding low energy states for a given problem $h
 Generally, the \textit{dimension} of an lattice Ising problem is understood to be the dimension of the lattice, not of the connectivity graph itself. This means a 1-dimensional lattice problem is a string with a connection between consecutive qubits, a 2-dimensional problem is a grid where each variable is connected to its four neighbors, and so on. It is worth noting that lattice Ising problems of greater that 2 dimensions have shown to be NP-hard, making the problem interesting for both physicists looking for good ways of making models as well as computer scientists.
 
 \section{Simulated annealing}
-Simulated annealing is a simple but effective heuristic algorithm for solving Ising problems. It is inspired by the physical annealing process. Physicists noted that if you take a hot ferromagnet, apply a magnetic field, and then cool it very quickly, the magnetic particles end up in a state of disorder similar to what would be found in its hot state. However, if you cool it slowly, then the particles will align themselves during the cooling process resulting in a well ordered magnet by the end. This process is called annealing.
+Simulated annealing is a simple but effective heuristic algorithm for solving Ising problems. It is inspired by the physical annealing process. Physicists noted that if one takes a hot ferromagnet, applies a magnetic field, and then cools it very quickly, the magnetic particles end up in a state of disorder similar to what would be found in its hot state. However, if it is cooled slowly, then the particles will align themselves during the cooling process resulting in a well-ordered magnet by the end. This process is called annealing.
 
 Simulated annealing takes this idea and attempts to replicate it. It is a Metropolis algorithm, meaning small changes are made to the system state and accepted if they improve the energy. However, even if the change results in a higher energy state, simulated annealing will accept the change with a certain probability which is a function of temperature. Over the course of the algorithm, we slowly lower the temperature, meaning worse states will have a higher likelihood of being accepted towards the beginning of the anneal than at the end. This concept allows simulated annealing to work itself out of local minima at the beginning, and then slowly settle in to the minimum it finds itself in at the end.
 
@@ -963,13 +1084,14 @@ Usually, this Metropolis update will be applied a fixed number of times. The ent
 An overview of simulated as applied to the Ising model is as follows:
 
 \begin{figure}[H]
-Input: $\beta_i, \beta_f, num\_sweeps, h, J$. (the $\beta$ values represent inverse temperature, so $\beta = 1/T$)
+Input: $\beta_i, \beta_f, M, h, J$. (the $\beta$ values represent inverse temperature, so $\beta = 1/T$, and $M$ is the number of sweeps)
 \begin{enumerate}
 \item Start with a random state $s$.
-\item Let $\beta = \beta_i, \beta\_step = (\beta_f - \beta_i)/num\_sweeps$.
-\item Repeat $num\_sweeps$ times:
+\item Let $\beta = \beta_i, \beta\_step = (\beta_f - \beta_i)/M$.
+\item Repeat $M$ times:
 	\begin{enumerate}
-	\item For $i$ in a random permutation of $[0,1,...,n-1]$:
+	\item Set $R \gets$ random permutation of $[0,1,...,n-1]$.
+	\item For $i$ in $R$ do:
 		\begin{enumerate}
 		\item Let $s' = s$.
 		\item Set $s'[i] = -s'[i]$.
@@ -989,13 +1111,15 @@ Quantum annealing is another technique used to solve Ising problems. In the same
 
 For Ising problems, we define a Hamiltonian $H(s)$ as follows:
 
-$$H(s) = \frac{\Delta(s)}{2}\sum_i \sigma^x_i + \frac{\epsilon(s)}{2}\left(\sum_i \sigma^z_i + \sum_{i, j>i}J_{ij}\sigma^z_i \sigma^z_j\right)$$
+$$H(s) = \frac{\Delta(s)}{2}\sum_i \sigma^x_i + \frac{\epsilon(s)}{2}\left(\sum_i h_i\sigma^z_i + \sum_{i, j>i}J_{ij}\sigma^z_i \sigma^z_j\right)$$
 
 A Hamiltonian is a quantum operator which describes how the physical system will evolve over time. This can be seen in the Schr\"{o}dinger equation $H\Psi = E\Psi$, where $H$ is the Hamiltonian operator, $\Psi$ is the system state, and $E$ is a eigenvalue (the energy of the state). As $H$ changes over time, $\Psi$ will also evolve and the energy of the system will change as well.
 
 In the Hamiltonian described above, $s \in [0,1]$ is the annealing parameter, and $\sigma^x$ and $\sigma^z$ are the Pauli-x and Pauli-z matrices respectively. The first expression represents the \textit{transverse field} and the second represents the \textit{longitudinal} field. $\Delta(s)/2$ is the energy scale for the transverse field and $\epsilon(s)/2$ is the energy scale for the longitudinal field. At the beginning of the anneal, when $s = 0$, we have $\Delta(s)/2 \gg \epsilon(s)/2$ such that the transverse field dominates. By the end, at $s=1$, we have $\epsilon(s)/2 \gg \Delta(s)/2$ so that the longitudinal field, where our desired Ising problem $h$ and $J$ are actually represented, dominates.
 
-The notation $\sigma^x_i$ means the Pauli-x matrix as applied to the $i$th qubit. This means it is actually a $2^n$ by $2^n$ matrix where $n$ is the number of qubits (or the length of $\Psi$). It can be found by $\sigma^x_i = \underbrace{I_2 \otimes I_2...}_{i \text{ times}} \otimes \sigma^x \otimes \underbrace{I_2 \otimes I_2...}_{n - i - 1 \text{ times}}$ where $I_2$ is the 2 by 2 identity matrix. The same logic applies for $\sigma^z_i$ except with the Pauli-z matrix.
+The notation $\sigma^x_i$ means the Pauli-x matrix as applied to the $i$th qubit. This means it is actually a $2^n$ by $2^n$ matrix where $n$ is the number of qubits (or the length of $\Psi$). It can be found by 
+$$\sigma^x_i = \underbrace{I_2 \otimes I_2 \otimes... \otimes I_2}_{i \text{ times}} \otimes \sigma^x \otimes \underbrace{I_2 \otimes I_2 \otimes ...\otimes I_2}_{n - i - 1 \text{ times}}$$
+where $I_2$ is the 2 by 2 identity matrix. The same logic applies for $\sigma^z_i$ except with the Pauli-z matrix.
 
 At the beginning of the anneal, when $s \approx 0$, the first expression (the transverse field) will dominate, and the system state should tend towards a superposition of all possible states such that if we ``measured" the processor we would see all states with equal likelihood. As the annealing parameter increases, the second expression (the longitudinal field) will begin to dominate. 
 
@@ -1003,7 +1127,7 @@ The \textit{Adiabatic Theorem} states that if this transition from transverse fi
 
 \section{The D-Wave Quantum Annealer}
 
-Though to perform the quantum annealing algorithm on an Ising problem of a reasonable size would be impossible, luckily D-Wave has built several real quantum annealers using superconducting loops of niobium wire. Due to physical limitations, they chose to build their chips using a Chimera structured graph, pictured below. A Chimera graph consists of \textit{cells} of $k_{4,4}$ subgraphs which then have four qubits connected vertically to the corresponding qubits in the cells above and below, and four connected horizontally to corresponding qubits. The edges connecting qubits are also called couplers. 
+Though to perform the quantum annealing algorithm on an Ising problem of a reasonable size would be impossible, luckily D-Wave has built several real quantum annealers using superconducting loops of niobium wire. Due to physical limitations, they chose to build their chips using a Chimera structured graph, pictured below. A Chimera graph consists of \textit{cells} of $K_{4,4}$ bipartite subgraphs which then have four qubits connected vertically to the corresponding qubits in the cells above and below, and four connected horizontally to corresponding qubits. The edges connecting qubits are also called couplers. 
 
 \begin{figure}[h!]
   \centerline{\includegraphics[width=\linewidth/2]{resources/images/chimera.png}}
@@ -1011,7 +1135,7 @@ Though to perform the quantum annealing algorithm on an Ising problem of a reaso
   \label{fig:boat1}
 \end{figure}
 
-Though there are many parameters that the D-Wave chip accepts, the main process of using it to solve problems was to send a problem $h$ and $J$, and then receive a number of ``reads" back that were the solutions the chip found.
+Though there are many parameters that the D-Wave chip accepts, the main process of using it to solve problems is to send a problem $h$ and $J$, and then receive a number of ``reads" back that are the solutions the chip found.
 
 \section{Graph Embedding}
 
@@ -1021,12 +1145,12 @@ To get around this, we use several qubits and their couplers to form a \textit{c
 
 To make this more formal, for an embedding of a graph $G$ with $n$ vertices $V_G = \{v_1, v_2, \ldots, v_n\}$ on graph $H$ with $m$ vertices $V_H = \{u_1, u_2, \ldots, u_m\}$, we define an embedding $M: v_i \in V_G \rightarrow \mathbf{s}_i \subset V_G$. For $M$ to be a valid embedding, there are three requirements:
 \begin{enumerate}
-	\item All $\mathbf{s}_i$ must be disjoint with each other, i.e. for all $1 \leq i < j \leq n$, $s_i \cap s_j = \emptyset$.
+	\item All $\mathbf{s}_i$ must be disjoint with each other, i.e. for all $1 \leq i < j \leq n$, $\mathbf{s}_i \cap \mathbf{s}_j = \emptyset$.
 	\item All $\mathbf{s}_i$ must be connected in $H$. This means that for all $u_j \in \mathbf{s}_i$, there is at least one other vertex $u_k \in \mathbf{s}_i$ such that $u_ju_k \in E(H)$.
 	\item If there is an edge $v_iv_j \in E(G)$, then there are some $u_{i*}$ and $u_{j*}$ such that $u_{i*}u_{j*} \in E(H)$. This ensures that for any edge in $G$, there is at least one corresponding edge in $H$ that we can map to.
 \end{enumerate}
 
-For an example, let's take $k_3$ graph (called $G$ with vertices $1,2,3$) and embed it in a cyclic graph with 5 vertices (called $H$ with vertices $a,b,c,d,e$).
+For an example, let's take a $K_3$ complete graph (called $G$ with vertices $1,2,3$) and embed it in a $C_5$ cyclic graph with 5 vertices (called $H$ with vertices $a,b,c,d,e$).
 
 \centerline{
 \begin{tikzpicture}
@@ -1067,9 +1191,9 @@ Consider an example: a chain of 4 qubits $q_0, q_1, q_2, q_3$ such that there is
 \centerline{
 \begin{tikzpicture}
 	\draw (1,1.5) node(v1) [draw,circle] {$q_0$};
-	\draw (4,1) node(v2) [draw,circle] {$q_1$};
-	\draw (2,1) node(v3) [draw,circle] {$q_2$};
-	\draw (3,1.5) node(v4) [draw,circle] {$q_3$};
+	\draw (2,1) node(v3) [draw,circle] {$q_1$};
+	\draw (3,1.5) node(v4) [draw,circle] {$q_2$};
+	\draw (4,1) node(v2) [draw,circle] {$q_3$};
 	\draw (1,3) node(v104) {};
 	\draw (2,-0.5) node(v105) {};
 	\draw (3,3) node(v106) {};
@@ -1087,7 +1211,7 @@ Consider an example: a chain of 4 qubits $q_0, q_1, q_2, q_3$ such that there is
 
 Physicists are interested in 3D lattice Ising problems, where the problem graph is a 3D grid. This means every variable in paired with 6 others, or 2 each in the $x$, $y$ and $z$ directions. I looked at two subsets of these problems: $4*k*k$ lattices and $8*k*k$ lattices. 
 
-For $4*k*k$ lattices, there is a simple embedding for the Chimera graph where every chain has two qubits. Thus each Chimera tile (a $k_{4,4}$) has a $4*1*1$ column of the original problem lattice embedded in it. All of the chains are symmetric with an algebraic chain strength of 3. The vertical $z$-axis edges of the column were all contained within a single tile, and then the $x$ and $y$-axis edges became the couplers going between tiles. Since there is a single obvious way to do this embedding, I did not spend much time on it.
+For $4*k*k$ lattices, there is a simple embedding for the Chimera graph where every chain has two qubits. Thus each Chimera tile (a $K_{4,4}$) has a $4*1*1$ column of the original problem lattice embedded in it. All of the chains are symmetric with an algebraic chain strength of 3. The vertical $z$-axis edges of the column were all contained within a single tile, and then the $x$ and $y$-axis edges became the couplers going between tiles. Since there is a single obvious way to do this embedding, I did not spend much time on it.
 
 For $8*k*k$ lattices, the best embeddings use chains of 4 qubits. A single $8*1*1$ column of the lattice is embedding into a square of 4 Chimera tiles, called a $C2$ (note a $C2$ has $4\cdot8=32$ total qubits, allowing 8 chains of 4 qubits each). In each of the embeddings, the chains take the same shape, and the $x$ and $y$-axis edges become the couplers connecting $C2$'s together. The only differences were in the placement of the $z$-axis edges, which could either be connected to the two qubits on either end of the chain, or to the two qubits in the middle of the chain. For each of these possible embeddings, it is also possible to ``split" the $z$-axis edge and put it on two couplers, as each chain is connected two every other with two couplers. Instead of putting the full weight of the original lattice edge, we use $1/2$ the original weight on each coupler. In total, this allowed for 4 embeddings. I worked primarily on testing which of these embeddings produced the best results.
 
@@ -1120,7 +1244,7 @@ For $8*k*k$ lattices, the best embeddings use chains of 4 qubits. A single $8*1*
 \vspace{10cm}
 \subsection{Chain Strength}
 
-Apart from testing the four embeddings, another important factor was determining the best chain strength to use for a given embedding. Though it would be ideal to set the chain strength to be the algebraic chain strength or greater of each embedding, this does not always give the best results. This is because the D-Wave processor has a limited energy scale available, and the energy scale is quantized and not perfectly accurate. This means as you increase the chain strength, the weights of the problem edges must go down and will eventually be distorted.
+Apart from testing the four embeddings, another important factor was determining the best chain strength to use for a given embedding. Though it would be ideal to set the chain strength to be the algebraic chain strength or greater of each embedding, this does not always give the best results. This is because the D-Wave processor has a limited energy scale available, and the energy scale is quantized and not perfectly accurate. This means as we increase the chain strength, the weights of the problem edges must go down and will eventually be distorted.
 
 \section{Success Statistics}
 Several different important statistics were used to measure the success an embedding. These were useful in comparing the embeddings and deciding which was best.
@@ -1152,7 +1276,7 @@ By examining these statistics across the four embeddings as well as a variety of
 
 \chapter{Conclusion}
 
-Despite quantum computing only offering a speedup for a limited class of problems, it still offers endless possible applications. In this Keystone I have discussed algorithms that can search a problem space efficiently, perform an associative memory recall, run the discrete Fourier transform, and solve graph problems with applications in physics. However, quantum computing as a field still faces many challenges that it must overcome to be truly useful outside of hypotheticals and academia.
+Despite quantum computing only offering a speedup for a limited class of problems, it still offers endless possible applications. In this Keystone I have discussed algorithms that can search a problem space efficiently, perform an associative memory recall, run the discrete Fourier transform, and solve graph problems with applications in physics. However, quantum computing as a field still faces many challenges that it must overcome to be truly useful outside of academia.
 
 One of the most prominent of these is the physical construction of the computers. D-Wave's accomplishments on the front of quantum annealing, such as their 2048-qubit annealer, are impressive, but it remains difficult to classify their performance. However, recent iterations appear to be beating out the classical solvers on hard Ising problems by large factors \cite{googleblog}. For universal or gate based quantum computers, which are necessary for the more famous algorithms such as Grover's and Shor's, progress is slow. 21 remains the largest number factored on a quantum computer using Shor's algorithm \cite{martinlopez}. Scalable gate-based designs remain out of reach.
 
@@ -1160,7 +1284,8 @@ Another problem faced by quantum computing is that it remains difficult to acces
 
 
 \begin{thebibliography}{9}
-\addcontentsline{toc}{chapter}{Bibliography} 
+\addcontentsline{toc}{chapter}{Bibliography}
+\raggedright
   
   \bibitem{apps14}
   “Applications: Helping solve some of the most difficult challenges.” (2014). Retrieved from http://www.dwavesys.com/quantum-computing/applications
@@ -1169,47 +1294,46 @@ Another problem faced by quantum computing is that it remains difficult to acces
   Einstein, A. (1905). Über einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt. Annalen der Physik, 322(6), 132-148.
 
   \bibitem{grover96}
-  Grover, L. K. (1996, July). A fast quantum mechanical algorithm for database search. \emph{In Proceedings of the twenty-eighth annual ACM symposium on Theory of computing} (pp. 212-219). ACM.
+  Grover, L. K. (1996). A fast quantum mechanical algorithm for database search. \emph{In Proceedings of the twenty-eighth annual ACM symposium on Theory of computing} (pp. 212-219). ACM.
 
   \bibitem{kothari12}
-  Kothari, R. (2012, August 9). How much does a quantum oracle to find a needle in a haystack really cost? Retrieved January 20, 2017, from http://mathoverflow.net/questions/102779/how-much-does-a-quantum-oracle-to-find-a-needle-in-a-haystack-really-cost
+  Kothari, R. (2012). How much does a quantum oracle to find a needle in a haystack really cost? Retrieved January 20, 2017, from http://mathoverflow.net/questions/102779/how-much-does-a-quantum-oracle-to-find-a-needle-in-a-haystack-really-cost
 
   \bibitem{martinlopez}
-  Martin-Lopez, E., Laing, A., Lawson, T., Alvarez, R., Zhou, X., \& O'brien, J. L. (2013). Experimental realisation of Shor's quantum factoring algorithm using qubit recycling. \emph{2013 Conference on Lasers \& Electro-Optics Europe \& International Quantum Electronics Conference CLEO EUROPE/IQEC}. doi:10.1109/cleoe-iqec.2013.6801701
+  Martín-López, E., Laing, A., Lawson, T., Alvarez, R., Zhou, X. Q., \& O'brien, J. L. (2012). Experimental realization of Shor's quantum factoring algorithm using qubit recycling. \emph{Nature Photonics}, 6(11), 773-776.
 
   \bibitem{meh01}
-  Mehra, J., \& Rechenberg, H. (2001). The historical development of quantum theory (Vol. 1). Springer Science \& Business Media.
+  Mehra, J., \& Rechenberg, H. (2001). The historical development of quantum theory (Vol. 1). \emph{Springer Science \& Business Media}.
   
   \bibitem{mer07}
-  Mermin, N. D. (2007). Quantum Computer Science: An Introduction. New York, NY: Cambridge University Press.
+  Mermin, N. D. (2007). \emph{Quantum Computer Science: An Introduction}. New York, NY: Cambridge University Press.
 
   \bibitem{Kha15}
-  Moammer, K. (2015, February 25). Intel Abandoning Silicon With 7nm and Beyond - Silicon Alternatives Coming By 2020. \emph{Wccf tech}. Retrieved January 20, 2017, from http://wccftech.com/intel-abandoning-silicon-7nm/
+  Moammer, K. (2015). Intel Abandoning Silicon With 7nm and Beyond - Silicon Alternatives Coming By 2020. \emph{Wccf tech}. Retrieved from http://wccftech.com/intel-abandoning-silicon-7nm/
 
   \bibitem{moo65}
   Moore, G.E. (1965). Cramming More Components Onto Integrated Circuits. Electronics, 38(8), 82-85.
 
   \bibitem{nev13}
-  Neven, H. (2013, May 16). Launching the Quantum Artificial Intelligence Lab. Retrieved March 10, 2015, from http://googleresearch.blogspot.ca/2013/05/launching-quantum-artificial.html
+  Neven, H. (2013). Launching the Quantum Artificial Intelligence Lab. Retrieved from http://googleresearch.blogspot.ca/2013/05/launching-quantum-artificial.html
   
   \bibitem{googleblog}
-  Neven, H. (2015, December 08). When can Quantum Annealing win? Retrieved January 20, 2017, from https://research.googleblog.com/2015/12/when-can-quantum-annealing-win.html  
+  Neven, H. (2015). When can Quantum Annealing win? Retrieved from https://research.googleblog.com/2015/12/when-can-quantum-annealing-win.html  
   
   \bibitem{dwa14}
   “Quantum Computing: How D-Wave Systems Work.” (2014). Retrieved from http://www.dwavesys.com/quantum-computing
   
   \bibitem{rojas04}
-  Rojas, R. (2004). A tutorial introduction to the lambda calculus. DOI= http://www.utdallas.edu/\textasciitilde gupta/courses/apl/lambda.pdf.  
+  Rojas, R. (2004). A tutorial introduction to the lambda calculus. Retrieved from http://www.utdallas.edu/\textasciitilde gupta/courses/apl/lambda.pdf.  
   
   \bibitem{schr26}
   Schrödinger, E. (1926). An undulatory theory of the mechanics of atoms and molecules. Physical Review, 28(6), 1049.
 
   \bibitem{Sim16}
-  Simonite, T. (2016, August 15). Intel Puts the Brakes on Moore's Law. \emph{MIT Technology Review}. Retrieved January 20, 2017, from https://www.technologyreview.com/s/601102/intel-puts-the-brakes-on-moores-law/
+  Simonite, T. (2016). Intel Puts the Brakes on Moore's Law. \emph{MIT Technology Review}. Retrieved from https://www.technologyreview.com/s/601102/intel-puts-the-brakes-on-moores-law/
 
    \bibitem{smi15}
-   Smith, Brian. ``Quantum Ideas: Week 2" Lecture Notes. \emph{University of Oxford}. Retrieved from
-   https://users.physics.ox.ac.uk/~smithb/website/coursenotes/qi/QILectureNotes2.pdf
+   Smith, B. (n.d.). ``Quantum Ideas: Week 2" Lecture Notes. \emph{University of Oxford}. Retrieved from https://users.physics.ox.ac.uk/~smithb/website/coursenotes/qi/QILectureNotes2.pdf
 
   \bibitem{spector04}
   Spector, L. (2004). Automatic Quantum Computer Programming: a genetic programming approach (Vol. 7). \emph{Springer Science and Business Media}.
@@ -1221,14 +1345,14 @@ Another problem faced by quantum computing is that it remains difficult to acces
   Ventura, D., \& Martinez, T. (2000). Quantum associative memory. \emph{Information Sciences}, 124(1), 273-296.
 
   \bibitem{foldit}
-  What is protein folding? (n.d.). Retrieved January 20, 2017, from http://fold.it/portal/info/about
+  What is protein folding? (n.d.). \emph{Foldit}. Retrieved January 20, 2017, from http://fold.it/portal/info/about
 
 \end{thebibliography}
 
 \begin{appendix}
 	\chapter{quantum-computer-simulator.rkt}
 	\begin{lstlisting}
-	#lang racket
+#lang racket
 (require math)
 (require racket/vector)
 
@@ -1358,7 +1482,7 @@ Another problem faced by quantum computing is that it remains difficult to acces
 	\end{lstlisting}
 	\chapter{grover.rkt}
 	\begin{lstlisting}
-	#lang racket
+#lang racket
 (require math)
 (require racket/vector)
 
@@ -1439,7 +1563,7 @@ Another problem faced by quantum computing is that it remains difficult to acces
 	\end{lstlisting}
 	\chapter{oracle-constructor.rkt}
 	\begin{lstlisting}
-	#lang racket
+#lang racket
 (require math)
 (require racket/vector)
 
@@ -1591,22 +1715,9 @@ Another problem faced by quantum computing is that it remains difficult to acces
 	\end{lstlisting}
 	
 	\chapter{qassoc.rkt}
-	
-	\section{Source code}
 
 	\lstinputlisting{resources/code/qassoc.rkt}
 	
-	\section{Usage of Code}
-	
-	The learning algorithm is called \textit{learn}, and the recall algorithm is called \textit{Grover-part}. You can use them like so:
-	
-	\begin{lstlisting}
-	> (define P '((0 0 0 0) (0 0 1 1) (0 1 1 0) (1 0 0 1) (1 1 0 0) (1 1 1 1)))
-	> (learn P)
-	> (Grover-part '(0 1 1 ?) P)
-	> (measure-register)
-	The most likely result is |0110> with a probability of 0.8437500000000002
-	\end{lstlisting}
 \end{appendix}
 
 \end{document}
