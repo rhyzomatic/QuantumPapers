@@ -11,7 +11,9 @@
 \setbeamertemplate{subsection toc}[circle]
 \setbeamertemplate{blocks}[rounded][shadow=false]
 
-\newcommand{\braket}[1]{\ensuremath{\left | #1 \right \rangle}}
+\usepackage{braket}
+
+%\newcommand{\braket}[1]{\ensuremath{\left | #1 \right \rangle}}
 
 \usepackage{hyperref}
 \usepackage{verbatim}
@@ -89,6 +91,16 @@
 \end{comment}
 
 \section{What is quantum computing?}
+\begin{frame}{What do we mean by \textit{quantum}?}
+\begin{itemize}
+	\item From quantum mechanics: a quantum system
+	\item Quantum phenomena: superposition, 	entanglement, tunneling 
+\end{itemize}
+\begin{center}
+\includegraphics[scale=0.15]{../resources/images/Schrodingers_cat.png}
+\end{center}
+\end{frame}
+
 \begin{frame}{What is quantum computing?}
 \begin{itemize}
 	\item Take advantage of quantum phenomena	
@@ -107,30 +119,36 @@
 \end{frame}
 \end{comment}
 
-\subsection{Modeling computation with vectors}
+\subsection{Classical computing}
+\begin{comment}
 \begin{frame}{Bits as vectors}
 \begin{itemize}
 	\item Bit has two states: 0 and 1
 	\item We can model each state with a vector
 \end{itemize}
-$$\braket{0} = \begin{pmatrix}1\\ 0\end{pmatrix} \quad \braket{1}=\begin{pmatrix}0\\ 1\end{pmatrix}$$
+$$\ket{0} = \begin{pmatrix}1\\ 0\end{pmatrix} \quad \ket{1}=\begin{pmatrix}0\\ 1\end{pmatrix}$$
 \end{frame}
+\end{comment}
 
-\begin{frame}{Bits as vectors}
+\begin{frame}{Modeling bits}
 \begin{columns}[T]
 	\begin{column}{.6\textwidth}
 		\begin{block}{}
 			\begin{itemize}
-				\item Classical computation makes it point up or down
+				\item Bit has two states: 0 and 1
+				\item $b = \ket{0}$ or $\ket{1}$
+				\item Classical computation amounts to flipping between these states
 			\end{itemize}
     	\end{block}
 	\end{column}
-	\begin{column}{.4\textwidth}
+	\begin{column}{.05\textwidth}
+	\end{column}	
+	\begin{column}{.3\textwidth}
     	\begin{block}{}
 			\begin{tikzpicture}[]
-				\draw[<-, thick] (0,2) -- (0,0) node[near start, above, shift={(0, 0.4)}] {$\braket{0} = \begin{pmatrix}1\\ 0\end{pmatrix}$};
+				\draw[<-, thick] (0,2) -- (0,0) node[near start, above, shift={(0, 0.4)}] {$\ket{0}$}; %{$\ket{0}} = \begin{pmatrix}1\\ 0\end{pmatrix}$};
 				\filldraw (0,0) circle (2.5pt);
-				\draw[->, thick] (0,0) -- (0,-2) node[near end, below, shift={(0, -0.4)}] {$\braket{1}=\begin{pmatrix}0\\ 1\end{pmatrix}$};
+				\draw[->, thick] (0,0) -- (0,-2) node[near end, below, shift={(0, -0.4)}] {$\ket{1}$}; %{$\ket{1}} %=\begin{pmatrix}0\\ 1\end{pmatrix}$};
 			\end{tikzpicture}
 		\end{block}
 	\end{column}
@@ -142,7 +160,7 @@ $$\braket{0} = \begin{pmatrix}1\\ 0\end{pmatrix} \quad \braket{1}=\begin{pmatrix
 \begin{itemize}
 	\item Computation happens on more than one bit at once
 	\item We can also represent multi-bit systems with a single vector
-	\item $\braket{00} = \begin{pmatrix} 1 \\ 0 \\ 0 \\ 0 \end{pmatrix} \quad \braket{10} = \begin{pmatrix} 0 \\ 0 \\ 1 \\ 0 \end{pmatrix} \quad \braket{111} = \begin{pmatrix} 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 1\end{pmatrix}$
+	\item $\ket{00} = \begin{pmatrix} 1 \\ 0 \\ 0 \\ 0 \end{pmatrix} \quad \ket{10} = \begin{pmatrix} 0 \\ 0 \\ 1 \\ 0 \end{pmatrix} \quad \ket{111} = \begin{pmatrix} 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 1\end{pmatrix}$
 \end{itemize}
 \end{frame}
 \end{comment}
@@ -156,12 +174,14 @@ $$\braket{0} = \begin{pmatrix}1\\ 0\end{pmatrix} \quad \braket{1}=\begin{pmatrix
 				\item Analogous to the bit
 				\item Infinite possible states
 				\pause
-				\item $ \left | \psi \right \rangle=\alpha _{0}\left | 0 \right \rangle+\alpha _{1}\left | 1 \right \rangle=\begin{pmatrix}\alpha_{0}\\ \alpha_{1}\end{pmatrix}$
+				\item $\ket{q} = a_0 \ket{0} + a_1 \ket{1}$
 				\pause
-				\item $ \left | \alpha_{0} \right |^{2} + \left | \alpha_{1} \right |^{2}=1$
+				\item Constraint: $|a_0|^2 + |a_1|^2 = 1$
 				\pause
-				\item Probability of \\ observing $\braket{i}$: $|\alpha_i|^2$
-				%\item $\braket{\psi} = ae^{i\theta}\braket{0} + be^{i\phi}\braket{1}$
+				\item Probability of \\ observing \\ 
+						$P(\ket{0}) = |a_0|^2$ \\
+						$P(\ket{1}) = |a_1|^2$
+				%\item $\ket{\psi} = ae^{i\theta}\ket{0} + be^{i\phi}\ket{1}$
 				%\item $1 = a^2(\cos^2{\theta} + \sin^2{\theta}) + b^2(\cos^2{\phi} + \sin^2{\phi})$
 				%\item $a^2 + b^2 = 1$
 			\end{itemize}
@@ -187,7 +207,7 @@ $$\braket{0} = \begin{pmatrix}1\\ 0\end{pmatrix} \quad \braket{1}=\begin{pmatrix
 \begin{frame}{Quantum system state vector}
 \begin{itemize}
 	\item Just as with classical computers, we can have multiple qubits with longer state vectors
-	\item \small{$\braket{\Psi} = \begin{pmatrix} \alpha_0 \\ \alpha_1 \\ \alpha_2 \\ \alpha_3 \end{pmatrix} \quad \braket{\Psi} = \begin{pmatrix} \alpha_0 \\ \alpha_1 \\ \alpha_2 \\ \alpha_3 \\ \alpha_4 \\ \alpha_5 \\ \alpha_6 \\ \alpha_7 \end{pmatrix}$}
+	\item \small{$\ket{\Psi} = \begin{pmatrix} \alpha_0 \\ \alpha_1 \\ \alpha_2 \\ \alpha_3 \end{pmatrix} \quad \ket{\Psi} = \begin{pmatrix} \alpha_0 \\ \alpha_1 \\ \alpha_2 \\ \alpha_3 \\ \alpha_4 \\ \alpha_5 \\ \alpha_6 \\ \alpha_7 \end{pmatrix}$}
 	\item Restraint: $|\alpha_0|^2 + |\alpha_1|^2 + |\alpha_2|^2 + ... = 1$
 \end{itemize}
 \end{frame}
@@ -211,9 +231,9 @@ $$\braket{0} = \begin{pmatrix}1\\ 0\end{pmatrix} \quad \braket{1}=\begin{pmatrix
 
 \begin{frame}{Applying gates}
 \begin{itemize}
-	\item Start with a state vector $\braket{\Psi} = \begin{pmatrix}0 \\ 1\end{pmatrix}$
-	\item Applying a Pauli-x gate: $\sigma_x \braket{\Psi} = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}\begin{pmatrix}0 \\ 1\end{pmatrix} = \begin{pmatrix}1 \\ 0\end{pmatrix}$
-	\item Applying a Hadamard: $H \braket{\Psi} = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}\begin{pmatrix}0 \\ 1\end{pmatrix} = \frac{1}{\sqrt{2}}\begin{pmatrix}1 \\ -1\end{pmatrix} = \begin{pmatrix}\frac{1}{\sqrt{2}} \\ -\frac{1}{\sqrt{2}}\end{pmatrix}$
+	\item Start with a state vector $\ket{\Psi} = \begin{pmatrix}0 \\ 1\end{pmatrix}$
+	\item Applying a Pauli-x gate: $\sigma_x \ket{\Psi} = \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}\begin{pmatrix}0 \\ 1\end{pmatrix} = \begin{pmatrix}1 \\ 0\end{pmatrix}$
+	\item Applying a Hadamard: $H \ket{\Psi} = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}\begin{pmatrix}0 \\ 1\end{pmatrix} = \frac{1}{\sqrt{2}}\begin{pmatrix}1 \\ -1\end{pmatrix} = \begin{pmatrix}\frac{1}{\sqrt{2}} \\ -\frac{1}{\sqrt{2}}\end{pmatrix}$
 	
 \end{itemize}
 \end{frame}
@@ -239,7 +259,7 @@ Let's try out a fun tool! http://algorithmicassertions.com/quirk (Thank you Crai
 \end{frame}
 \end{comment}
 
-
+\begin{comment}
 \section{Applications}
 \begin{frame}{What are the applications?}
 \begin{itemize}
@@ -249,6 +269,7 @@ Let's try out a fun tool! http://algorithmicassertions.com/quirk (Thank you Crai
 	\item These problems have wide reaching and important applications
 \end{itemize}
 \end{frame}
+\begin{comment}
 
 \begin{comment}
 \begin{frame}{Notable quantum algorithms}
@@ -297,7 +318,7 @@ Let's try out a fun tool! http://algorithmicassertions.com/quirk (Thank you Crai
 				\item Infinite possible states
 				\item $ \left | \psi \right \rangle=\alpha _{0}\left | 0 \right \rangle+\alpha _{1}\left | 1 \right \rangle=\begin{pmatrix}\alpha_{0}\\ \alpha_{1}\end{pmatrix}$
 				\item $ \left | \alpha_{0} \right |^{2} + \left | \alpha_{1} \right |^{2}=1$
-				\item $\braket{\psi} = ae^{i\theta}\braket{0} + be^{i\phi}\braket{1}$
+				\item $\ket{\psi} = ae^{i\theta}\ket{0} + be^{i\phi}\ket{1}$
 				%\item $1 = a^2(\cos^2{\theta} + \sin^2{\theta}) + b^2(\cos^2{\phi} + \sin^2{\phi})$
 				\item $a^2 + b^2 = 1$
 			\end{itemize}
