@@ -12,7 +12,6 @@
 \usepackage{wrapfig}
 \usepackage[letterpaper, portrait, margin=1in]{geometry}
 \usepackage{framed}
-\usepackage{listings}
 \usepackage{color}
 \usepackage{float}
 
@@ -28,23 +27,14 @@
 \usepackage[section]{placeins}
 \usepackage{braket}
 \newcommand{\?}{\stackrel{?}{=}}
-\definecolor{mauve}{rgb}{0.58,0,0.82}
-\lstset{frame=tb,
-  language=Lisp,
-  aboveskip=3mm,
-  belowskip=3mm,
-  showstringspaces=false,
-  columns=flexible,
-  basicstyle={\small\ttfamily},
-  numbers=none,
-  numberstyle=\tiny\color{gray},
-  keywordstyle=\color{blue},
-  commentstyle=\color{cyan},
-  stringstyle=\color{mauve},
-  breaklines=true,
-  breakatwhitespace=true,
-  tabsize=3
-}
+
+%%%% CODE SYNTAX HIGHLIGHTING
+\usepackage{minted}
+\usemintedstyle{monokai}
+\usepackage{xcolor}
+\definecolor{charcoal}{rgb}{0.21, 0.27, 0.31}
+%\definecolor{smokyblack}{rgb}{0.06, 0.05, 0.03}
+%%%% END
 
 \usepackage{import}
 %\newcommand{\braket}[1]{\ensuremath{\left | #1 \right \rangle}}
@@ -178,7 +168,7 @@ Because $a$ and $b$ also must satisfy this normalization constraint, we can repr
 \begin{figure}[!h]
     \centering
     \def\svgwidth{2in}
-    \import{resources/pdfs/}{Bloch_Sphere.pdf_tex}
+    \import{resources/pdfs/}{resources/pdfs/Bloch_Sphere.pdf_tex}
     \caption{The Bloch sphere}
     \label{fig:awesome_image}
 \end{figure}
@@ -330,41 +320,41 @@ Now that we have a way to represent the state of the system and a way to apply g
 
 First, use \textit{initialize-register}. This function accepts a list of the classical states we want to set the qubits to.
 
-\begin{lstlisting}
+\begin{minted}[bgcolor=charcoal, breaklines]{scheme}
 > (initialize-qubits '(0 1 0)) ; Initialize register with three qubits with the state |010>
-\end{lstlisting}
+\end{minted}
 
 Now, at any point, we can access the $n$ by 1 (for $n$ qubits) matrix corresponding to the vector representing the state of the qubits stored in the variable \textit{register}.
 
-\begin{lstlisting}
+\begin{minted}[bgcolor=charcoal, breaklines]{scheme}
 > register
 (mutable-array #[#[0 0 0 0 0 0 1 0]])
-\end{lstlisting}
+\end{minted}
 
 We can now apply a gate to the register using \textit{apply-gate}, which takes three arguments: a matrix representing the system-state (probably \textit{register}), a list of the qubits which we want to apply the gates to, and the gate itself (in matrix form). \textit{execute} Then sets register to the result of the computation.
 
-\begin{lstlisting}
+\begin{minted}[bgcolor=charcoal, breaklines]{scheme}
 > (apply-gate register '(0 1 2) Toffoli-gate)
 (array #[#[0 0 0 0 0 0 0 1]])
 > register
 (array #[#[0 0 0 0 0 0 0 1]])
-\end{lstlisting}
+\end{minted}
 
 At this point, quetzal provides the gates: \textit{Hadamard-gate}, \textit{Pauli-X-gate}, \textit{Pauli-Y-gate}, \textit{Pauli-Z-gate}, \textit{CNOT-gate}, \textit{QSwap-gate}, and \textit{Toffoli-gate}. We can define our own by doing
 
-\begin{lstlisting}
+\begin{minted}[bgcolor=charcoal, breaklines]{scheme}
 > (define my-gate (matrix [
 > 	[a b]
 > 	[c d]
 > ]))
-\end{lstlisting}
+\end{minted}
 
 The function \textit{measure-register} displays the most likely state for the system to collapse to on measurement and the likelihood of that happening:
 
-\begin{lstlisting}
+\begin{minted}[bgcolor=charcoal, breaklines]{scheme}
 > (measure-register)
 The most likely result is |011> with a probability of 0.9991823155432934
-\end{lstlisting}
+\end{minted}
 
 In the next chapter, I introduce Grover's algorithm, one of the most important algorithms discovered for a universal quantum computer, and explain how I implemented it using my simulator.
 
@@ -438,7 +428,7 @@ Notice that we only have to apply the Grover step $\frac{\pi}{4} \sqrt{2^{n}}$ t
 
 Here is my implementation of Grover's algorithm in Racket:
 
-\begin{lstlisting}
+\begin{minted}[bgcolor=charcoal, breaklines]{scheme}
 (define Grover (lambda (input-U_omega) ; An implementation of Grover's algorithm, input-U_omega is a matrix representation the oracle operator
 	(let ([steps 0] [qubits (exact-round (/ (log (matrix-num-cols input-U_omega)) (log 2)))]) ; Requires log(N) qubits where N is the width of the matrix representing U_omega
 		(cond
@@ -457,7 +447,7 @@ Here is my implementation of Grover's algorithm in Racket:
 		(for ([i steps])
 			(Hadamard (phase-flip-0-state (Hadamard (Oracle register))))) ; Apply the Grover Diffusion operator
 		)))
-\end{lstlisting}
+\end{minted}
 
 Note how I apply a Hadamard gate on all qubits with \textit{(Hadamard register)}, and how this will result in a new register. I can thus apply two series of Hadamard gates with \textit{(Hadamard (Hadamard register))}. The rest of the code for Grover's algorithm can be found in appendix B.
 
@@ -535,27 +525,27 @@ My implementation in Scheme of this algorithm for generating the oracle can be s
 
 The \textit{generate-fake-Oracle} function takes two arguments: the number of entries in the ``database" we are searching (must be a factor of 2), and the item we are searching for. It then outputs a the corresponding matrix which can be used as the oracle in Grover's algorithm.
 
-\begin{lstlisting}
+\begin{minted}[bgcolor=charcoal, breaklines]{scheme}
 > (matrix-print (generate-fake-Oracle 4 2))
 1 0 0 0 
 0 1 0 0 
 0 0 -1 0 
 0 0 0 1 
-\end{lstlisting}
+\end{minted}
 
 The function \textit{Grover} simulates the algorithm. It takes one argument, the matrix representing the oracle function.
 
-\begin{lstlisting}
+\begin{minted}[bgcolor=charcoal, breaklines]{scheme}
 > (Grover (generate-fake-Oracle 64 45))
 The number of required qubits is 6
 Number of operations required is 7
 > (measure-register)
 The most likely result is |101101> with a probability of 0.996585680786799
-\end{lstlisting}
+\end{minted}
 
 The function \textit{generate\-U\_omega} generates the oracle from a classical circuit. It a boolean expression as its only argument. After it is executed, the matrix representing the oracle operator will be set as \textit{U\_omega}, and \textit{input-qubits} will contain the number of input qubits (used later on). For example, for the boolean expression ($x_0 \land x_1$):
 
-\begin{lstlisting}
+\begin{minted}[bgcolor=charcoal, breaklines]{scheme}
 > (generate-U_omega '(AND 0 1))
 > (matrix-print U_omega)
 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
@@ -592,19 +582,19 @@ The function \textit{generate\-U\_omega} generates the oracle from a classical c
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
 > input-qubits
 1
-\end{lstlisting}
+\end{minted}
 
 Besides the \textit{AND} operator, there is also the \textit{OR} and the \textit{NOT} operators. Both \textit{AND} and \textit{OR} take exactly two arguments, while \textit{NOT} takes one.
 
 Because there are extra qubits required for the simulated circuit (notice that in the above example, 5 qubits are needed despite there only being two inputs), there is a special Grover's algorithm function called `Grover-from-classical-circuit` that takes this into account. To use it, input the \textit{U\_omega} and \textit{input-qubits} which are automatically generated after using \textit{generate-U\_omega}.
 
-\begin{lstlisting}
+\begin{minted}[bgcolor=charcoal, breaklines]{scheme}
 > (Grover-from-classical-circuit U_omega input-qubits)
 The number of required qubits is 5
 Number of operations required is 2
 > (measure-register)
 The most likely result is |11000> with a probability of 0.9999999999999987
-\end{lstlisting}
+\end{minted}
 
 Since the solution to the classical circuit we inputted is $\Ket{11}$ we can see that the algorithm was successful. Note that Grover's algorithm expects that there is only one state of the input bits which flips the phase. This means there should only be one solution to the search function, and thus just one solution to the classical circuit inputted. If there is more than one, \textit{generate-U\_omega} will not output a valid oracle matrix.
 
@@ -727,13 +717,13 @@ Though I have no understanding of $T$, V\&M assert that the second algorithm is 
 \section{Implementation and Usage}
 The implementation of quantum associative memory written for my quantum computer simulator has been included in appendix D. The learning algorithm is called \textit{learn}, and the recall algorithm is called \textit{Grover-part}. They can be used like so:
 	
-	\begin{lstlisting}
-	> (define P '((0 0 0 0) (0 0 1 1) (0 1 1 0) (1 0 0 1) (1 1 0 0) (1 1 1 1)))
-	> (learn P)
-	> (Grover-part '(0 1 1 ?) P)
-	> (measure-register)
-	The most likely result is |0110> with a probability of 0.8437500000000002
-	\end{lstlisting}
+\begin{minted}[bgcolor=charcoal, breaklines]{scheme}
+> (define P '((0 0 0 0) (0 0 1 1) (0 1 1 0) (1 0 0 1) (1 1 0 0) (1 1 1 1)))
+> (learn P)
+> (Grover-part '(0 1 1 ?) P)
+> (measure-register)
+The most likely result is |0110> with a probability of 0.8437500000000002
+\end{minted}
 
 \section{Discussion and Conclusion}
 
@@ -1351,7 +1341,7 @@ Another problem faced by quantum computing is that it remains difficult to acces
 
 \begin{appendix}
 	\chapter{quantum-computer-simulator.rkt}
-	\begin{lstlisting}
+	\begin{minted}[bgcolor=charcoal, linenos, breaklines]{scheme}
 #lang racket
 (require math)
 (require racket/vector)
@@ -1479,9 +1469,9 @@ Another problem faced by quantum computing is that it remains difficult to acces
 	[0 0 0 0 0 0 0 1]
 	[0 0 0 0 0 0 1 0]
 ]))
-	\end{lstlisting}
+	\end{minted}
 	\chapter{grover.rkt}
-	\begin{lstlisting}
+	\begin{minted}[bgcolor=charcoal, linenos, breaklines]{scheme}
 #lang racket
 (require math)
 (require racket/vector)
@@ -1560,9 +1550,9 @@ Another problem faced by quantum computing is that it remains difficult to acces
 		(for ([i steps])
 			(Hadamard (phase-flip-0-state (Hadamard (Oracle register))))) ; Apply the Grover Diffusion operator
 		)))
-	\end{lstlisting}
+	\end{minted}
 	\chapter{oracle-constructor.rkt}
-	\begin{lstlisting}
+	\begin{minted}[bgcolor=charcoal, linenos, breaklines]{scheme}
 #lang racket
 (require math)
 (require racket/vector)
@@ -1711,12 +1701,11 @@ Another problem faced by quantum computing is that it remains difficult to acces
 		(for ([i steps])
 			(special-Hadamard (phase-flip-0-state (special-Hadamard (Oracle register))))) ; Apply the Grover Diffusion operator
 		)))
-	\begin{lstlisting}
-	\end{lstlisting}
+	\end{minted}
 	
 	\chapter{qassoc.rkt}
 
-	\lstinputlisting{resources/code/qassoc.rkt}
+	\inputminted[bgcolor=charcoal, linenos, breaklines]{scheme}{resources/code/qassoc.rkt}
 	
 \end{appendix}
 
