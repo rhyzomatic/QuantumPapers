@@ -97,7 +97,8 @@
 	\item Quantum phenomena: superposition, 	entanglement, tunneling 
 \end{itemize}
 \begin{center}
-\includegraphics[scale=0.15]{../resources/images/Schrodingers_cat.png}
+\includegraphics[scale=0.15]{../resources/images/Schrodingers_cat.png}\\
+{\tiny By Dhatfield - Own work, CC BY-SA 3.0, https://commons.wikimedia.org/w/index.php?curid=4279886\par}
 \end{center}
 \end{frame}
 
@@ -215,16 +216,18 @@ $$\ket{0} = \begin{pmatrix}1\\ 0\end{pmatrix} \quad \ket{1}=\begin{pmatrix}0\\ 1
 
 \begin{frame}{Quantum gates}
 \begin{itemize}
-	\item To carry out actual computation, we apply ``gates" to the qubits
-	\item Each gate can be represented as a matrix
-	\item The following system state is a result of the multiplying the gate by the previous state vector
+	\item To carry out actual computation, we apply \textit{gates} to the qubits
+  	\item A gate is a function which changes the qubits' states in a predictable manner
+  	\item Common gates ``rotate" the qubit's state on the Bloch sphere
+	%\item Each gate can be represented as a matrix
+	%\item The following system state is a result of the multiplying the gate by the previous state vector
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Examples of gates}
 \begin{itemize}
 	\item Pauli-x or NOT gate ($\sigma_x$): $\begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix}$
-	%\item Pauli-z gate ($\sigma_z$): $\begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$
+	\item Pauli-z gate ($\sigma_z$): $\begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}$
 	\item Hadamard ($H$): $\frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}$
 \end{itemize}
 \end{frame}
