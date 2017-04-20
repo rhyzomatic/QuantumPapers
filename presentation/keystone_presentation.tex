@@ -52,9 +52,11 @@
 \makeatother
 
 \setbeamerfont{footline}{size=\fontsize{10}{11}\selectfont}
+\setbeamercovered{invisible}
 
-
-
+\let\olditem\item
+\renewcommand{\item}{%
+\olditem\vspace{10pt}}
 
 \begin{document}
 \usebackgroundtemplate{%
@@ -93,7 +95,7 @@
 \section{What is quantum computing?}
 \begin{frame}{What do we mean by \textit{quantum}?}
 \begin{itemize}
-	\item From quantum mechanics: a quantum system
+	\item Quantum mechanics
 	\item Quantum phenomena: superposition, 	entanglement, tunneling 
 \end{itemize}
 \begin{center}
@@ -169,29 +171,23 @@ $$\ket{0} = \begin{pmatrix}1\\ 0\end{pmatrix} \quad \ket{1}=\begin{pmatrix}0\\ 1
 \subsection{Universal quantum computer}
 \begin{frame}{Qubits}
 \begin{columns}[T]
-	\begin{column}{.6\textwidth}
+	\begin{column}{.5\textwidth}
 		\begin{block}{}
 			\begin{itemize}
 				\item Analogous to the bit
 				\item Infinite possible states
-				\pause
 				\item $\ket{q} = a_0 \ket{0} + a_1 \ket{1}$
-				\pause
-				\item Constraint: $|a_0|^2 + |a_1|^2 = 1$
-				\pause
-				\item Probability of \\ observing \\ 
-						$P(\ket{0}) = |a_0|^2$ \\
-						$P(\ket{1}) = |a_1|^2$
+				%\item<3-> Constraint: $|a_0|^2 + |a_1|^2 = 1$
 				%\item $\ket{\psi} = ae^{i\theta}\ket{0} + be^{i\phi}\ket{1}$
 				%\item $1 = a^2(\cos^2{\theta} + \sin^2{\theta}) + b^2(\cos^2{\phi} + \sin^2{\phi})$
 				%\item $a^2 + b^2 = 1$
 			\end{itemize}
     	\end{block}
 	\end{column}
-	\begin{column}{.4\textwidth}
+	\begin{column}{.5\textwidth}
     	\begin{block}{}
-			\includegraphics[width=1\textwidth]{../resources/pdfs/Bloch_Sphere.pdf}
-		\end{block}
+		\includegraphics[width=1\textwidth]{../resources/pdfs/custom_Bloch_sphere.pdf}
+	\end{block}
 	\end{column}
 \end{columns}
 \end{frame}
@@ -202,6 +198,31 @@ $$\ket{0} = \begin{pmatrix}1\\ 0\end{pmatrix} \quad \ket{1}=\begin{pmatrix}0\\ 1
 	\item For qubits, measurement collapses their state
 	\item Qubits are probabilistic 
 \end{itemize}
+\end{frame}
+
+\subsection{Universal quantum computer}
+\begin{frame}{Qubits}
+\begin{columns}[T]
+	\begin{column}{.5\textwidth}
+		\begin{block}{}
+			\begin{itemize}
+				\item $\ket{q} = a_0 \ket{0} + a_1 \ket{1}$
+				%\item<3-> Constraint: $|a_0|^2 + |a_1|^2 = 1$
+				\item Probability of \\ observing \\ 
+						$\ket{0}$: $|a_0|^2$ \\
+						$\ket{1}$: $|a_1|^2$
+				%\item $\ket{\psi} = ae^{i\theta}\ket{0} + be^{i\phi}\ket{1}$
+				%\item $1 = a^2(\cos^2{\theta} + \sin^2{\theta}) + b^2(\cos^2{\phi} + \sin^2{\phi})$
+				%\item $a^2 + b^2 = 1$
+			\end{itemize}
+    	\end{block}
+	\end{column}
+	\begin{column}{.5\textwidth}
+    	\begin{block}{}
+		\includegraphics[width=1\textwidth]{../resources/pdfs/custom_Bloch_sphere.pdf}
+	\end{block}
+	\end{column}
+\end{columns}
 \end{frame}
 
 \begin{comment}
