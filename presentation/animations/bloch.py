@@ -49,8 +49,8 @@ def rotation_vector(initial_state, axis, theta):
             v*(u*x + v*y + w*z)*(1 - cos(theta)) + y*cos(theta) + (w*x - u*z)*sin(theta),
             w*(u*x + v*y + w*z)*(1 - cos(theta)) + z*cos(theta) + (-v*x + u*y)*sin(theta)]
 
-def rotate_bloch(initial_state, axis, rotation, dir_name, num_frames=350, num_points=50, pause_frames=100):
-    b = Bloch()
+def rotate_bloch(initial_state, axis, rotation, dir_name, num_frames=200, num_points=50, pause_frames=50, init_vec_str=None):
+    b = Bloch3d()
     #b.vector_color = ['r']
     b.figsize = [10, 10]
     b.font_size = 30
@@ -79,16 +79,20 @@ def rotate_bloch(initial_state, axis, rotation, dir_name, num_frames=350, num_po
     for frame in range(pause_frames):
         b.save(dirc=dir_name)
 
-    init_vec_str = ",".join(map(str, initial_state))
+    if init_vec_str is None:
+        init_vec_str = ",".join(map(str, initial_state))
     print(init_vec_str)
     os.system("ffmpeg -y -r 60 -i "+dir_name+"/bloch_%01d.png "+dir_name+"/"+dir_name+init_vec_str+".mp4")
     os.system("rm "+dir_name+"/*.png")
 
-for inits in ((0, 0, 1), (0, -1, 0), polar_to_vec(1/3*pi, 1/9*pi)):
-    rotate_bloch(inits, (1/sqrt(2), 0, 1/sqrt(2)), pi, "hadamard")
-    rotate_bloch(inits, (1, 0, 0), pi, "pauli_x")
-    rotate_bloch(inits, (0, 1, 0), pi, "pauli_y")
-    rotate_bloch(inits, (0, 0, 1), pi, "pauli_z")
+inits = ((0, 0, 1), (0, -1, 0), polar_to_vec(1/3*pi, 1/9*pi))
+inits = [polar_to_vec(1/3*pi, -1/9*pi)]
+names = [None, None, "60-20"]
+for init, name in zip(inits, names):
+    rotate_bloch(init, (1/sqrt(2), 0, 1/sqrt(2)), pi, "hadamard")
+    rotate_bloch(init, (1, 0, 0), pi, "pauli_x")
+    rotate_bloch(init, (0, 1, 0), pi, "pauli_y")
+    rotate_bloch(init, (0, 0, 1), pi, "pauli_z")
 
 """
 b = Bloch()
